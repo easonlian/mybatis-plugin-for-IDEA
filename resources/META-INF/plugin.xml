@@ -1,0 +1,111 @@
+<!--suppress XmlUnboundNsPrefix -->
+<idea-plugin version="2">
+    <id>common.plugin.extension</id>
+    <name>General Tools</name>
+    <version>v1.4.2</version>
+    <vendor email="jianyu.lin@qunar.com" url="http://www.qunar.com">Qunar.com, 聪明你的旅行</vendor>
+
+    <description><![CDATA[
+      <p>Add common framework support, such as qshedule, mybatis, etc.</p>
+      <p>
+        depend on intellij'spring plugin, <span color:'red;'>not support
+        intellij community、Android Studio version</span> so far<br>
+      </p>
+    ]]></description>
+
+    <change-notes><![CDATA[
+      <p>v1.4.2</p>
+      <ur>
+        <li>fix bug: about #{} ${}, support primitive params</li>
+        <li>fix bug: isMybatisFile util may cause StackOverFlow</li>
+        <li>fix bug: can't find base resource dirs when generate new mapper xml</li>
+      </ul>
+      <p>v1.4.0</p>
+      <ur>
+        <li>add mapper generation intention in interface class</li>
+        <li>add statement generation intention in interface method</li>
+        <li>add mapper xml #{} ${} parameter reference</li>
+        <li>fix some bugs</li>
+        <li>improve performance</li>
+      </ul>
+    ]]>
+    </change-notes>
+
+    <idea-version since-build="141.0"/>
+
+    <depends>com.intellij.modules.lang</depends>
+    <!--suppress PluginXmlValidity -->
+    <depends>com.intellij.spring</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- 公共服务 -->
+        <projectService serviceImplementation="org.qunar.plugin.service.EditorService"/>
+        <projectService serviceImplementation="org.qunar.plugin.service.DomParseService"/>
+        <projectService serviceImplementation="org.qunar.plugin.service.JavaService"/>
+        <projectService serviceImplementation="org.qunar.plugin.service.TypeAliasService"/>
+
+        <!-- qschedule -->
+        <psi.referenceContributor order="last" language="XML"
+                                  implementation="org.qunar.plugin.qschedule.contributor.QscheduleMethodAttrReferenceContributor"/>
+        <localInspection language="XML" enabledByDefault="true" displayName="Qschedule Xml Inspection"
+                         groupName="Qschedule" level="WARNING"
+                         implementationClass="org.qunar.plugin.qschedule.inspection.QscheduleTaskTagInspection"/>
+
+        <!-- mybatis -->
+        <dom.fileDescription implementation="org.qunar.plugin.mybatis.description.ConfigurationDescription"/>
+        <dom.fileDescription implementation="org.qunar.plugin.mybatis.description.MapperDescription"/>
+
+        <localInspection language="XML" enabledByDefault="true" displayName="Mybatis Config Inspection"
+                         groupName="Mybatis" level="WARNING" order="first"
+                         implementationClass="org.qunar.plugin.mybatis.inspection.MybatisConfigInspection"/>
+        <localInspection language="XML" enabledByDefault="true" displayName="Mybatis Mapper Inspection"
+                         groupName="Mybatis" level="WARNING" order="first"
+                         implementationClass="org.qunar.plugin.mybatis.inspection.MybatisMapperInspection"/>
+
+        <codeInsight.lineMarkerProvider language="XML" order="first"
+                                        implementationClass="org.qunar.plugin.mybatis.linemarker.Xml2JavaLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA" order="first"
+                                        implementationClass="org.qunar.plugin.mybatis.linemarker.Java2XmlLineMarkerProvider"/>
+
+        <psi.referenceContributor order="last" language="XML"
+                                  implementation="org.qunar.plugin.mybatis.contributor.RelatedFilePathReferenceContributor"/>
+
+        <definitionsScopedSearch order="last" implementation="org.qunar.plugin.mybatis.query.MapperXmlInheritorsSearch"/>
+
+        <typedHandler order="first" implementation="org.qunar.plugin.mybatis.typehandler.MapperSqlParamTypedHandler"/>
+
+        <completion.contributor order="first" language="SQL"
+                                implementationClass="org.qunar.plugin.mybatis.contributor.StatementParamsCompletionContributor"/>
+        <psi.referenceContributor order="last" language="XML"
+                                  implementation="org.qunar.plugin.mybatis.contributor.MapperInclude2SqlReferenceContributor"/>
+        <psi.referenceContributor order="last" language="XML"
+                                  implementation="org.qunar.plugin.mybatis.contributor.MapperResultMapAttrReferenceContributor"/>
+        <psi.referenceContributor order="last" language="XML"
+                                  implementation="org.qunar.plugin.mybatis.contributor.StatementParamsReferenceContributor"/>
+
+        <intentionAction>
+            <className>org.qunar.plugin.mybatis.intention.statement.InsertGenerateIntention</className>
+        </intentionAction>
+        <intentionAction>
+            <className>org.qunar.plugin.mybatis.intention.statement.SelectGenerateIntention</className>
+        </intentionAction>
+        <intentionAction>
+            <className>org.qunar.plugin.mybatis.intention.statement.UpdateGenerateIntention</className>
+        </intentionAction>
+        <intentionAction>
+            <className>org.qunar.plugin.mybatis.intention.statement.DeleteGenerateIntention</className>
+        </intentionAction>
+        <intentionAction>
+            <className>org.qunar.plugin.mybatis.intention.MapperGenerateIntention</className>
+        </intentionAction>
+
+        <!-- dubbo -->
+        <!--<psi.referenceContributor order="first" implementation="org.qunar.plugin.dubbo.contributor.PropertyHolderReferenceContributor"/>-->
+    </extensions>
+
+    <actions>
+        <action id="qunarPlugin.action.DebugAction" class="org.qunar.plugin.action.DebugAction"
+                text="debugAction" description="Leave a debug point"/>
+    </actions>
+
+</idea-plugin>
