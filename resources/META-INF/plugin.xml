@@ -1,12 +1,12 @@
 <!--suppress XmlUnboundNsPrefix -->
 <idea-plugin version="2">
     <id>common.plugin.extension</id>
-    <name>General Tools</name>
+    <name>Mybatis Tools</name>
     <version>v1.4.2</version>
     <vendor email="jianyu.lin@qunar.com" url="http://www.qunar.com">Qunar.com, 聪明你的旅行</vendor>
 
     <description><![CDATA[
-      <p>Add common framework support, such as qshedule, mybatis, etc.</p>
+      <p>Add mybatis framework support</p>
       <p>
         depend on intellij'spring plugin, <span color:'red;'>not support
         intellij community、Android Studio version</span> so far<br>
@@ -43,13 +43,6 @@
         <projectService serviceImplementation="org.qunar.plugin.service.DomParseService"/>
         <projectService serviceImplementation="org.qunar.plugin.service.JavaService"/>
         <projectService serviceImplementation="org.qunar.plugin.service.TypeAliasService"/>
-
-        <!-- qschedule -->
-        <psi.referenceContributor order="last" language="XML"
-                                  implementation="org.qunar.plugin.qschedule.contributor.QscheduleMethodAttrReferenceContributor"/>
-        <localInspection language="XML" enabledByDefault="true" displayName="Qschedule Xml Inspection"
-                         groupName="Qschedule" level="WARNING"
-                         implementationClass="org.qunar.plugin.qschedule.inspection.QscheduleTaskTagInspection"/>
 
         <!-- mybatis -->
         <dom.fileDescription implementation="org.qunar.plugin.mybatis.description.ConfigurationDescription"/>
@@ -98,9 +91,6 @@
         <intentionAction>
             <className>org.qunar.plugin.mybatis.intention.MapperGenerateIntention</className>
         </intentionAction>
-
-        <!-- dubbo -->
-        <!--<psi.referenceContributor order="first" implementation="org.qunar.plugin.dubbo.contributor.PropertyHolderReferenceContributor"/>-->
     </extensions>
 
     <actions>
