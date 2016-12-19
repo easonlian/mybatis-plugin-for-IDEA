@@ -118,7 +118,7 @@ public class CreateMapperXmlDialog extends DialogWrapper {
         if (exist != null && !exist.isDirectory()) {
             Balloon errorMsg = JBPopupFactory.getInstance()
                     .createHtmlTextBalloonBuilder("Can't create file 'src/main/resource/mybatis/mapper/Supplier.xml'. File already exists",
-                            Icons.ERROR_INCO, JBColor.background(), new HyperlinkListener() {
+                            Icons.ERROR_ICON, JBColor.background(), new HyperlinkListener() {
                         @Override
                         public void hyperlinkUpdate(HyperlinkEvent e) {
                             System.out.println(e);

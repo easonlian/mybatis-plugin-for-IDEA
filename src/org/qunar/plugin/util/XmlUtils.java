@@ -3,6 +3,8 @@
 */
 package org.qunar.plugin.util;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.util.xml.GenericAttributeValue;
 
 /**
@@ -17,7 +19,12 @@ public class XmlUtils {
      * @param <T> value type
      * @return value type instance
      */
-    public static <T> T getAttrValue(GenericAttributeValue<T> attributeValue) {
-        return attributeValue == null ? null : attributeValue.getValue();
+    public static <T> T getAttrValue(final GenericAttributeValue<T> attributeValue) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<T>() {
+            @Override
+            public T compute() {
+                return attributeValue == null ? null : attributeValue.getValue();
+            }
+        });
     }
 }

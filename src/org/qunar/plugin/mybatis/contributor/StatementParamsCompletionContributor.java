@@ -82,8 +82,8 @@ public class StatementParamsCompletionContributor extends CompletionContributor 
 
 
     private List<LookupElement> buildParamLookupElements(@NotNull PsiMethod psiMethod) {
-        List<PsiElement> elements = ParamPropertyHelper.buildParamLookupElements(psiMethod);
-        return Lists.transform(elements, new Function<PsiElement, LookupElement>() {
+        Set<PsiElement> elements = ParamPropertyHelper.buildParamLookupElements(psiMethod);
+        return Lists.transform(Lists.newArrayList(elements), new Function<PsiElement, LookupElement>() {
             @Override
             public LookupElement apply(PsiElement element) {
                 return LookupElementBuilder.create(element, getLookupString(element)).withIcon(Icons.JAVA_PARAMETER_ICON);

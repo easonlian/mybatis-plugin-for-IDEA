@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 编辑区域工具
@@ -31,8 +32,13 @@ public class EditorService {
      * @param project 工程对象
      * @return 获取实例
      */
-    public static EditorService INSTANCE(Project project) {
+    public static EditorService getInstance(Project project) {
         return ServiceManager.getService(project, EditorService.class);
+    }
+    
+    @Nullable
+    public Editor getCurrentEditor() {
+        return fileEditorManager.getSelectedTextEditor();
     }
 
     /**

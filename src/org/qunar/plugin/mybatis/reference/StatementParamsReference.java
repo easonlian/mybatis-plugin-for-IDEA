@@ -20,7 +20,6 @@ import org.qunar.plugin.mybatis.bean.mapper.Statement;
 import org.qunar.plugin.mybatis.util.ParamPropertyHelper;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -65,7 +64,7 @@ public class StatementParamsReference extends PsiReferenceBase<XmlTag> {
             return null;
         }
         PsiMethod psiMethod = statement.getId().getValue();
-        List<PsiElement> elements = ParamPropertyHelper.buildParamLookupElements(psiMethod);
+        Set<PsiElement> elements = ParamPropertyHelper.buildParamLookupElements(psiMethod);
         elements.addAll(extraParams);
         for (PsiElement element : elements) {
             if (checkPsiElementWithTargetText(element)) {

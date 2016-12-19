@@ -157,7 +157,7 @@ abstract class StatementGenerateIntention implements IntentionAction {
                 CodeFormatter.format(statement.getXmlTag());
                 //  navigate to new statement
                 //noinspection ConstantConditions
-                EditorService.INSTANCE(project).scrollTo(statement.getId().getXmlAttributeValue());
+                EditorService.getInstance(project).scrollTo(statement.getId().getXmlAttributeValue());
             }
         });
     }

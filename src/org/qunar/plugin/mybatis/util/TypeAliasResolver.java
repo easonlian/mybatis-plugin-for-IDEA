@@ -108,6 +108,7 @@ public enum TypeAliasResolver {
                     PsiClass psiClass =JavaService.getInstance(project).findProjectClass(qualifiedClassName);
                     if (psiClass != null) {
                         packageTypeAliasMap.put(qualifiedClassName, qualifiedClassName);
+                        packageTypeAliasMap.put(psiFile.getName(), qualifiedClassName);
                     }
                 }
             }
@@ -154,6 +155,7 @@ public enum TypeAliasResolver {
                                     continue;
                                 }
                                 typeAliasMap.put(childClass.getQualifiedName(), childClass.getQualifiedName());
+                                typeAliasMap.put(childClass.getName(), childClass.getQualifiedName());
                             }
                         }
                     }

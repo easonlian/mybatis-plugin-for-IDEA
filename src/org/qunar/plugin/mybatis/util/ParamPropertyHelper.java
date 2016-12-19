@@ -4,6 +4,7 @@
 package org.qunar.plugin.mybatis.util;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.psi.PsiAnnotation;
@@ -27,8 +28,10 @@ import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.Annotation;
 import org.qunar.plugin.service.JavaService;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * type alias util class
@@ -38,14 +41,24 @@ import java.util.Locale;
  */
 public class ParamPropertyHelper {
 
+    private static Set<String> EXCLUDE_METHOD_NAME = Sets.newHashSet();
+
+    static {
+        for (Method method : Object.class.getDeclaredMethods()) {
+            EXCLUDE_METHOD_NAME.add(method.getName());
+        }
+        EXCLUDE_METHOD_NAME.add("class");
+        EXCLUDE_METHOD_NAME.add("Object");
+    }
+
     /**
      * build param lookup elements
      * @param refMethod ref method
      * @return lookup items
      */
     @NotNull
-    public static List<PsiElement> buildParamLookupElements(@NotNull PsiMethod refMethod) {
-        List<PsiElement> elements = Lists.newArrayList();
+    public static Set<PsiElement> buildParamLookupElements(@NotNull PsiMethod refMethod) {
+        Set<PsiElement> elements = Sets.newHashSet();
         PsiParameter firstParam = null;
         //  add @Param
         for (PsiParameter methodParam : refMethod.getParameterList().getParameters()) {
@@ -68,7 +81,8 @@ public class ParamPropertyHelper {
         if (firstParam == null) {
             return elements;
         }
-        return buildFirstParamLookupElements(firstParam);
+        elements.addAll(buildFirstParamLookupElements(firstParam));
+        return elements;
     }
 
     /**
@@ -136,6 +150,7 @@ public class ParamPropertyHelper {
 
     /**
      * resolve first parameter's all get methods
+     * @param firstParam mapper method first param
      * @param paramClass class
      * @return lookup items
      */
@@ -143,17 +158,18 @@ public class ParamPropertyHelper {
     private static List<PsiElement> buildFirstParamLookupElements(@NotNull PsiParameter firstParam,
                                                                   @Nullable PsiClass paramClass) {
         List<PsiElement> elements = Lists.newArrayList();
-        if (firstParam.getNameIdentifier() != null) {
-            elements.add(firstParam.getNameIdentifier());
+        if (paramClass == null || paramClass.getQualifiedName() == null) {
+            return elements;
         }
-        elements.add(firstParam.getNameIdentifier());
-        if (paramClass == null || paramClass.getQualifiedName() == null
-                || paramClass.getQualifiedName().startsWith("java")) {
+        if (paramClass.getQualifiedName().startsWith("java.")) {
+            if (firstParam.getNameIdentifier() != null){
+                elements.add(firstParam.getNameIdentifier());
+            }
             return elements;
         }
         for (PsiMethod psiMethod : paramClass.getAllMethods()) {
             String propertyName = parseGetterMethod(psiMethod.getName());
-            if (propertyName != null || !psiMethod.getName().equals("getClass")) {
+            if (propertyName != null && !EXCLUDE_METHOD_NAME.contains(psiMethod.getName())) {
                 PsiElement element = psiMethod.getNameIdentifier() == null ? psiMethod : psiMethod.getNameIdentifier();
                 elements.add(element);
             }

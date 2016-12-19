@@ -72,7 +72,7 @@ public class MapperGenerateIntention implements IntentionAction {
                             if (mapperFile == null) return;
                             Mapper mapperDom = DomElements.getMapperDomElement(mapperFile);
                             if (mapperDom == null) return;
-                            EditorService.INSTANCE(project).scrollTo(mapperDom.getXmlTag());
+                            EditorService.getInstance(project).scrollTo(mapperDom.getXmlTag());
                         }
                     }
                 });

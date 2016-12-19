@@ -15,10 +15,13 @@ import javax.swing.*;
  */
 public interface Icons {
 
-    Icon MYBATIS_2_XML_ICON = IconLoader.getIcon("/icons/navigateDown.png");
-    Icon MYBATIS_2_JAVA_ICON = IconLoader.getIcon("/icons/navigateUp.png");
+    Icon MYBATIS_2_XML_ICON = IconLoader.getIcon("/icons/mybatis/navigateDown.png");
+    Icon MYBATIS_2_JAVA_ICON = IconLoader.getIcon("/icons/mybatis/navigateUp.png");
     Icon JAVA_PARAMETER_ICON = IconLoader.getIcon("/nodes/parameter.png");
     Icon JAVA_METHOD_ICON = IconLoader.getIcon("/nodes/method.png");
     Icon XML_TAG_ICON = IconLoader.getIcon("/nodes/tag.png");
-    Icon ERROR_INCO = IconLoader.getIcon("/general/error.png");
+    Icon ERROR_ICON = IconLoader.getIcon("/general/error.png");
+    Icon OUTLINE_TOOL_WINDOWN_ICON = IconLoader.getIcon("/icons/outline/outline.png");
+    Icon OUTLINE_ZOOM_IN_ICON = IconLoader.getIcon("/icons/outline/zoomIn.png");
+    Icon OUTLINE_TZOOM_OUT_ICON = IconLoader.getIcon("/icons/outline/zoomOut.png");
 }
