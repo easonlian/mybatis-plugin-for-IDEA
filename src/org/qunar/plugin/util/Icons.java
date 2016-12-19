@@ -21,7 +21,4 @@ public interface Icons {
     Icon JAVA_METHOD_ICON = IconLoader.getIcon("/nodes/method.png");
     Icon XML_TAG_ICON = IconLoader.getIcon("/nodes/tag.png");
     Icon ERROR_ICON = IconLoader.getIcon("/general/error.png");
-    Icon OUTLINE_TOOL_WINDOWN_ICON = IconLoader.getIcon("/icons/outline/outline.png");
-    Icon OUTLINE_ZOOM_IN_ICON = IconLoader.getIcon("/icons/outline/zoomIn.png");
-    Icon OUTLINE_TZOOM_OUT_ICON = IconLoader.getIcon("/icons/outline/zoomOut.png");
 }
