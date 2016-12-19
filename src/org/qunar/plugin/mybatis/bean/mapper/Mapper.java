@@ -9,6 +9,7 @@ import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.SubTag;
 import com.intellij.util.xml.SubTagList;
+import org.qunar.plugin.util.DomRoot;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
  * Author: jianyu.lin
  * Date: 2016/11/21 Time: 下午3:47
  */
+@DomRoot("mapper")
 public interface Mapper extends DomElement {
 
     @Attribute("namespace")

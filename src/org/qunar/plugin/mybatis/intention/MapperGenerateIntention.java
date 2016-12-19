@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.ui.CreateMapperXmlDialog;
 import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.service.EditorService;
 
 /**
@@ -70,7 +71,7 @@ public class MapperGenerateIntention implements IntentionAction {
                         if (dialog.showAndGet()) {
                             PsiFile mapperFile = dialog.getNewMapperFile();
                             if (mapperFile == null) return;
-                            Mapper mapperDom = DomElements.getMapperDomElement(mapperFile);
+                            Mapper mapperDom = MapperConfHolder.INSTANCE.getMapperDomElement(mapperFile);
                             if (mapperDom == null) return;
                             EditorService.getInstance(project).scrollTo(mapperDom.getXmlTag());
                         }

@@ -18,14 +18,12 @@ import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomService;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.bean.mapper.Statement;
 import org.qunar.plugin.mybatis.util.domchecker.DeleteChecker;
 import org.qunar.plugin.mybatis.util.domchecker.InsertChecker;
 import org.qunar.plugin.mybatis.util.domchecker.SelectChecker;
 import org.qunar.plugin.mybatis.util.domchecker.UpdateChecker;
-import org.qunar.plugin.service.DomParseService;
 import org.qunar.plugin.util.XmlUtils;
 
 import java.util.Collection;
@@ -47,27 +45,6 @@ public class DomElements {
     private static final Map<PsiFile, Mapper> MAPPER_HOLDER = Maps.newConcurrentMap();
     /* is init mapper xmls */
     private static final AtomicBoolean initCheck = new AtomicBoolean(false);
-
-    /**
-     * get and cache mapper dom element
-     * @return mapper dom element
-     */
-    @SuppressWarnings("WeakerAccess")
-    @NotNull
-    public static Collection<Mapper> getMapperDomElementByNamespace(final String namespace) {
-        return Collections2.filter(MAPPER_HOLDER.values(), new Predicate<Mapper>() {
-            @Override
-            public boolean apply(Mapper mapper) {
-                if (mapper.getXmlTag() == null || 
-                        !MAPPER_ROOT_TAG_NAME.equals(mapper.getXmlTag().getName())) {
-                    // clear and reload cache 
-                    initCheck.set(false);
-                    return false;
-                }
-                return StringUtils.equals(mapper.getNamespace().getStringValue(), namespace);
-            }
-        });
-    }
 
     /**
      * get all mapping mapper xml
@@ -98,25 +75,6 @@ public class DomElements {
     }
 
     /**
-     * get and cache mapper dom element
-     * @param psiFile mapper file
-     * @return mapper dom element
-     */
-    @Nullable
-    public static Mapper getMapperDomElement(@NotNull PsiFile psiFile) {
-        if (MAPPER_HOLDER.containsKey(psiFile)) {
-            return MAPPER_HOLDER.get(psiFile);
-        } else {
-            DomParseService parseService = DomParseService.INSTANCE(psiFile.getProject());
-            Mapper mapper = parseService.parseDomElementsByFile(psiFile, Mapper.class);
-            if (mapper != null) {
-                MAPPER_HOLDER.put(psiFile, mapper);
-            }
-            return mapper;
-        }
-    }
-
-    /**
      * checkMapper dom elements
      * @param manager inspection manager
      * @param mapperDom mapper dom element
@@ -124,10 +82,7 @@ public class DomElements {
      */
     @NotNull
     public static List<ProblemDescriptor> checkMapperDomElement(@NotNull InspectionManager manager,
-                                                                @Nullable Mapper mapperDom) {
-        if (mapperDom == null) {
-            return Lists.newArrayList();
-        }
+                                                                @NotNull Mapper mapperDom) {
         PsiClass mapperClass = XmlUtils.getAttrValue(mapperDom.getNamespace());
         if (mapperClass == null) {
             return Lists.newArrayList();
@@ -174,7 +129,7 @@ public class DomElements {
      * @return boolean
      */
     public static boolean isConfigurationXmlFile(PsiFile psiFile) {
-        return isMybatisFile(psiFile, MAPPER_ROOT_TAG_NAME);
+        return isMybatisFile(psiFile, CONFIG_ROOT_TAG_NAME);
     }
 
     /**
@@ -213,5 +168,25 @@ public class DomElements {
     private static boolean isMybatisXmlFile(XmlFile xmlFile, String rootTagName) {
         return xmlFile.getRootTag() != null &&
                 StringUtils.equals(xmlFile.getRootTag().getName(), rootTagName);
+    }
+
+    /**
+     * get and cache mapper dom element
+     * @return mapper dom element
+     */
+    @NotNull
+    private static Collection<Mapper> getMapperDomElementByNamespace(final String namespace) {
+        return Collections2.filter(MAPPER_HOLDER.values(), new Predicate<Mapper>() {
+            @Override
+            public boolean apply(Mapper mapper) {
+                if (mapper.getXmlTag() == null ||
+                        !MAPPER_ROOT_TAG_NAME.equals(mapper.getXmlTag().getName())) {
+                    // clear and reload cache
+                    initCheck.set(false);
+                    return false;
+                }
+                return StringUtils.equals(mapper.getNamespace().getStringValue(), namespace);
+            }
+        });
     }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.bean.mapper.Statement;
 import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.util.Icons;
 
 import java.util.Collection;
@@ -33,7 +34,7 @@ public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
             return;
         }
 
-        Mapper mapperDom = DomElements.getMapperDomElement(element.getContainingFile());
+        Mapper mapperDom = MapperConfHolder.INSTANCE.getMapperDomElement(element.getContainingFile());
         if (mapperDom == null || mapperDom.getNamespace() == null
                 || mapperDom.getNamespace().getValue() == null) {
             return;

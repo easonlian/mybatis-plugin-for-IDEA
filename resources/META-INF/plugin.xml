@@ -44,9 +44,12 @@
         <dom.fileDescription implementation="org.qunar.plugin.mybatis.description.ConfigurationDescription"/>
         <dom.fileDescription implementation="org.qunar.plugin.mybatis.description.MapperDescription"/>
 
-        <localInspection language="XML" enabledByDefault="true" displayName="Mybatis Config Inspection"
-                         groupName="Mybatis" level="WARNING" order="first"
-                         implementationClass="org.qunar.plugin.mybatis.inspection.MybatisConfigInspection"/>
+        <localInspection language="XML" enabledByDefault="true" displayName="Mybatis TypeAliases Inspection"
+                         groupName="Mybatis" level="WARNING" order="last"
+                         implementationClass="org.qunar.plugin.mybatis.inspection.config.TypeAliasesInspection"/>
+        <localInspection language="XML" enabledByDefault="true" displayName="Mybatis Config Mappers Inspection"
+                         groupName="Mybatis" level="WARNING" order="last"
+                         implementationClass="org.qunar.plugin.mybatis.inspection.config.MappersInspection"/>
         <localInspection language="XML" enabledByDefault="true" displayName="Mybatis Mapper Inspection"
                          groupName="Mybatis" level="WARNING" order="first"
                          implementationClass="org.qunar.plugin.mybatis.inspection.MybatisMapperInspection"/>

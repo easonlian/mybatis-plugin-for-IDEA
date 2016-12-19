@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.util.Inspections;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class MybatisMapperInspection extends LocalInspectionTool {
         if (!(DomElements.isMapperXmlFile(file))) {
             return null;
         }
-        Mapper mapper = DomElements.getMapperDomElement(file);
+        Mapper mapper = MapperConfHolder.INSTANCE.getMapperDomElement(file);
         if (mapper == null || mapper.getNamespace() == null) {
             return null;
         }

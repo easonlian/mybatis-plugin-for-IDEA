@@ -27,7 +27,7 @@ import java.util.List;
  */
 abstract class StatementChecker<T extends Statement> implements DomChecker<T> {
 
-    protected final PsiClass mapperClass;
+    private final PsiClass mapperClass;
 
     StatementChecker(@NotNull PsiClass mapperClass) {
         this.mapperClass = mapperClass;
@@ -72,8 +72,8 @@ abstract class StatementChecker<T extends Statement> implements DomChecker<T> {
 
     @NotNull
     @SuppressWarnings("unused")
-    protected List<ProblemDescriptor> checkSpecialNodes(@NotNull InspectionManager manager,
-                                              @NotNull T sqlElement) {
+    private List<ProblemDescriptor> checkSpecialNodes(@NotNull InspectionManager manager,
+                                                      @NotNull T sqlElement) {
         return Lists.newArrayList();
     }
 }
