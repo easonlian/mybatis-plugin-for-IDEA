@@ -22,6 +22,7 @@
 2. 增加interface方法创建xml statement intention
 3. 增加xml文件中#{} ${}参数的关联跳转
 4. 修复spring bean name重复问题
+5. 修复mapper配置缓存没生效的问题
 
 ### 插件截图
 
