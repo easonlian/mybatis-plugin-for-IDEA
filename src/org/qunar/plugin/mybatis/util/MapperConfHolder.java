@@ -69,14 +69,21 @@ public class MapperConfHolder extends ConfHolder<Mapper> {
     private Collection<Mapper> getMapperDomElementByNamespace(final String namespace) {
         return Collections2.filter(MapperConfHolder.INSTANCE.getAllDomElements(), new Predicate<Mapper>() {
             @Override
-            public boolean apply(Mapper mapper) {
+            public boolean apply(final Mapper mapper) {
                 if (mapper.getXmlTag() == null ||
                         !MapperConfHolder.INSTANCE.rootTagName.equals(mapper.getXmlTag().getName())) {
                     // clear and reload cache
                     initCheck.set(false);
                     return false;
                 }
-                return StringUtils.equals(mapper.getNamespace().getStringValue(), namespace);
+                String mapperNamespace = ApplicationManager.getApplication()
+                        .runReadAction(new Computable<String>() {
+                            @Override
+                            public String compute() {
+                                return mapper.getNamespace().getStringValue();
+                            }
+                        });
+                return StringUtils.equals(mapperNamespace, namespace);
             }
         });
     }
