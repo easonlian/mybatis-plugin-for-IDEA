@@ -3,7 +3,6 @@ package org.qunar.plugin.mybatis.util;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
@@ -28,7 +27,6 @@ import org.qunar.plugin.util.XmlUtils;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -36,13 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DomElements {
 
-    public static final String CONFIG_ROOT_TAG_NAME = "configuration";
-    public static final String MAPPER_ROOT_TAG_NAME = "mapper";
-    /*
-     * hold mapper dom element to make more efficient
-     * @see http://www.jetbrains.org/intellij/sdk/docs/reference_guide/frameworks_and_external_apis/xml_dom_api.html?search=xml
-     * */
-    private static final Map<PsiFile, Mapper> MAPPER_HOLDER = Maps.newConcurrentMap();
     /* is init mapper xmls */
     private static final AtomicBoolean initCheck = new AtomicBoolean(false);
 
@@ -120,7 +111,7 @@ public class DomElements {
      * @return boolean
      */
     public static boolean isMapperXmlFile(PsiFile psiFile) {
-        return isMybatisFile(psiFile, MAPPER_ROOT_TAG_NAME);
+        return isMybatisFile(psiFile, MapperConfHolder.INSTANCE.rootTagName);
     }
 
     /**
@@ -129,7 +120,7 @@ public class DomElements {
      * @return boolean
      */
     public static boolean isConfigurationXmlFile(PsiFile psiFile) {
-        return isMybatisFile(psiFile, CONFIG_ROOT_TAG_NAME);
+        return isMybatisFile(psiFile, ConfigConfHolder.INSTANCE.rootTagName);
     }
 
     /**
@@ -176,11 +167,11 @@ public class DomElements {
      */
     @NotNull
     private static Collection<Mapper> getMapperDomElementByNamespace(final String namespace) {
-        return Collections2.filter(MAPPER_HOLDER.values(), new Predicate<Mapper>() {
+        return Collections2.filter(MapperConfHolder.INSTANCE.getAllDomElements(), new Predicate<Mapper>() {
             @Override
             public boolean apply(Mapper mapper) {
                 if (mapper.getXmlTag() == null ||
-                        !MAPPER_ROOT_TAG_NAME.equals(mapper.getXmlTag().getName())) {
+                        !MapperConfHolder.INSTANCE.rootTagName.equals(mapper.getXmlTag().getName())) {
                     // clear and reload cache
                     initCheck.set(false);
                     return false;

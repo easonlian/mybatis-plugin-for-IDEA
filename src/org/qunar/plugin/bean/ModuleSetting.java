@@ -16,14 +16,15 @@ import java.util.List;
  * Author: jianyu.lin
  * Date: 2016/12/5 Time: 下午7:51
  */
+@SuppressWarnings("UnusedReturnValue")
 public class ModuleSetting {
     
     private Module module; 
     
-    private List<VirtualFile> javaSources = Lists.newArrayList();
-    private List<VirtualFile> javaTestSources = Lists.newArrayList();
-    private List<VirtualFile> resourceSources = Lists.newArrayList();
-    private List<VirtualFile> resourceTestSources = Lists.newArrayList();
+    private final List<VirtualFile> javaSources = Lists.newArrayList();
+    private final List<VirtualFile> javaTestSources = Lists.newArrayList();
+    private final List<VirtualFile> resourceSources = Lists.newArrayList();
+    private final List<VirtualFile> resourceTestSources = Lists.newArrayList();
 
     public ModuleSetting addJavaSources(VirtualFile javaSource) {
         if (javaSource != null) {

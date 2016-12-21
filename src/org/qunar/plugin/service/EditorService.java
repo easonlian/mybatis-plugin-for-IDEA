@@ -46,6 +46,7 @@ public class EditorService {
      * @param element 目标元素
      * @param offset caret相对位置
      */
+    @SuppressWarnings("WeakerAccess")
     public void scrollTo(@NotNull PsiElement element, int offset) {
         NavigationUtil.activateFileWithPsiElement(element, true);
         Editor editor = fileEditorManager.getSelectedTextEditor();

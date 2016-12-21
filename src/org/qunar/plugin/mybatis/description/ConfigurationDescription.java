@@ -5,7 +5,7 @@ package org.qunar.plugin.mybatis.description;
 
 import com.intellij.util.xml.DomFileDescription;
 import org.qunar.plugin.mybatis.bean.config.Configuration;
-import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.ConfigConfHolder;
 
 /**
  * mybatis configuration xml description
@@ -16,6 +16,6 @@ import org.qunar.plugin.mybatis.util.DomElements;
 public class ConfigurationDescription extends DomFileDescription<Configuration> {
 
     public ConfigurationDescription() {
-        super(Configuration.class, DomElements.CONFIG_ROOT_TAG_NAME);
+        super(Configuration.class, ConfigConfHolder.INSTANCE.rootTagName);
     }
 }

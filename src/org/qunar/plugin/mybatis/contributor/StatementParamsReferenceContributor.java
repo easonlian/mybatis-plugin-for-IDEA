@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public class StatementParamsReferenceContributor extends PsiReferenceContributor {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\$\\{[a-zA-Z0-9_.]*\\})|(#\\{[a-zA-Z0-9_.]*\\})");
+    private static final Pattern PATTERN = Pattern.compile("(\\$\\{[a-zA-Z0-9_.]*})|(#\\{[a-zA-Z0-9_.]*})");
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {

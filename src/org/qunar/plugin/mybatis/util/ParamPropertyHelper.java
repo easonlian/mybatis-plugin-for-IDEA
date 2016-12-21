@@ -41,7 +41,7 @@ import java.util.Set;
  */
 public class ParamPropertyHelper {
 
-    private static Set<String> EXCLUDE_METHOD_NAME = Sets.newHashSet();
+    private static final Set<String> EXCLUDE_METHOD_NAME = Sets.newHashSet();
 
     static {
         for (Method method : Object.class.getDeclaredMethods()) {

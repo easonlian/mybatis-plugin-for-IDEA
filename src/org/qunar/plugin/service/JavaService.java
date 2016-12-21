@@ -55,7 +55,7 @@ public class JavaService {
      * @param javaPath java path
      * @return directories
      */
-    public PsiDirectory[] getRelatedDirectories(String javaPath) {
+    public PsiDirectory[] getRelatedDirectories(@SuppressWarnings("SameParameterValue") String javaPath) {
         if (javaPath == null) {
             return PsiDirectory.EMPTY_ARRAY;
         }

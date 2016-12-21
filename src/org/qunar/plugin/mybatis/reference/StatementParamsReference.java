@@ -35,7 +35,7 @@ public class StatementParamsReference extends PsiReferenceBase<XmlTag> {
     /* add for support tags who adds temp parameters,
      * eg: <foreach ... item="tempParam" >
      **/
-    private Set<PsiElement> extraParams = Sets.newHashSet();
+    private final Set<PsiElement> extraParams = Sets.newHashSet();
 
     public StatementParamsReference(@NotNull XmlTag xmlTag,
                                     @NotNull XmlTag parentTag, @NotNull TextRange range) {

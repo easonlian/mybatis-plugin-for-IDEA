@@ -38,6 +38,7 @@ public class Modules {
      * @param element psi element
      * @return module
      */
+    @SuppressWarnings("WeakerAccess")
     @Nullable
     public static Module getCurrentModuleByElement(@NotNull PsiElement element) {
         return ModuleUtilCore.findModuleForPsiElement(element);

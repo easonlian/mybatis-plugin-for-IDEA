@@ -5,7 +5,7 @@ package org.qunar.plugin.mybatis.description;
 
 import com.intellij.util.xml.DomFileDescription;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
-import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 
 /**
  * mybatis mapper xml description
@@ -16,6 +16,6 @@ import org.qunar.plugin.mybatis.util.DomElements;
 public class MapperDescription extends DomFileDescription<Mapper> {
 
     public MapperDescription() {
-        super(Mapper.class, DomElements.MAPPER_ROOT_TAG_NAME);
+        super(Mapper.class, MapperConfHolder.INSTANCE.rootTagName);
     }
 }

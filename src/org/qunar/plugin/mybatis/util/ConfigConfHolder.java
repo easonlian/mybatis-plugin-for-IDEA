@@ -5,7 +5,6 @@ package org.qunar.plugin.mybatis.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.qunar.plugin.mybatis.bean.config.Configuration;
-import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.util.ConfHolder;
 
 /**

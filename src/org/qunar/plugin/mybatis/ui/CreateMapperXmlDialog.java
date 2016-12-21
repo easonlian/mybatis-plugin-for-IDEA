@@ -49,7 +49,6 @@ public class CreateMapperXmlDialog extends DialogWrapper {
     private final Project project;
     private final PsiClass psiClass;
     private PsiFile physicalMapperFile;
-    private ModuleSetting moduleSetting;
 
     private JPanel myContentPane;
     private JTextField myMapperNameField;
@@ -72,7 +71,7 @@ public class CreateMapperXmlDialog extends DialogWrapper {
     private void initDirectoryComboBox() {
         //  add directories into comboBox
         if (project.getBasePath() == null) return;
-        moduleSetting = Modules.getModuleSettingByElement(psiClass);
+        ModuleSetting moduleSetting = Modules.getModuleSettingByElement(psiClass);
         for (VirtualFile virtualFile : moduleSetting.getAllResourceSources()) {
             //noinspection ConstantConditions
             String relatedPath = virtualFile.getPath().replaceFirst(project.getBasePath(), "");

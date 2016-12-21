@@ -21,7 +21,7 @@ import java.util.List;
  * Author: jianyu.lin
  * Date: 2016/12/19 Time: 下午6:52
  */
-public abstract class AbstractConfigInspection extends LocalInspectionTool {
+abstract class AbstractConfigInspection extends LocalInspectionTool {
 
     /**
      * valid config file
@@ -37,7 +37,7 @@ public abstract class AbstractConfigInspection extends LocalInspectionTool {
         if (!DomElements.isConfigurationXmlFile(file)) {
             return null;
         }
-        Configuration configuration = ConfigConfHolder.INSTANCE.getMapperDomElement(file);
+        Configuration configuration = ConfigConfHolder.INSTANCE.getDomElement(file);
         if (configuration == null) {
             return null;
         }

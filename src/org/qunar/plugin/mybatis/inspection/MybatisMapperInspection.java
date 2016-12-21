@@ -39,7 +39,7 @@ public class MybatisMapperInspection extends LocalInspectionTool {
         if (!(DomElements.isMapperXmlFile(file))) {
             return null;
         }
-        Mapper mapper = MapperConfHolder.INSTANCE.getMapperDomElement(file);
+        Mapper mapper = MapperConfHolder.INSTANCE.getDomElement(file);
         if (mapper == null || mapper.getNamespace() == null) {
             return null;
         }

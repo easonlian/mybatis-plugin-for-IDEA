@@ -4,7 +4,6 @@
 package org.qunar.plugin.util;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiClass;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,15 +29,6 @@ public class Javas {
         for (Method method : methods) {
             EXCLUDE_METHOD_NAMES.add(method.getName());
         }
-    }
-
-    /**
-     * get simple class name with first letter lower
-     * @param psiClass psi class
-     * @return pretty simple name
-     */
-    public static String getFirstLowerClassName(@NotNull PsiClass psiClass) {
-        return getFirstLowerFileName(psiClass.getName());
     }
 
     /**

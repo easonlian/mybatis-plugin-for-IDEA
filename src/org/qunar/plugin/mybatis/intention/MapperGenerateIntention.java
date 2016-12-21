@@ -71,7 +71,7 @@ public class MapperGenerateIntention implements IntentionAction {
                         if (dialog.showAndGet()) {
                             PsiFile mapperFile = dialog.getNewMapperFile();
                             if (mapperFile == null) return;
-                            Mapper mapperDom = MapperConfHolder.INSTANCE.getMapperDomElement(mapperFile);
+                            Mapper mapperDom = MapperConfHolder.INSTANCE.getDomElement(mapperFile);
                             if (mapperDom == null) return;
                             EditorService.getInstance(project).scrollTo(mapperDom.getXmlTag());
                         }

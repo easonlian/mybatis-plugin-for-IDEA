@@ -8,12 +8,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.xml.DomElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.service.DomParseService;
 
-import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * cache config xml files of framework
@@ -23,24 +21,26 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class ConfHolder<T extends DomElement> {
 
+    /*
+     * hold mapper dom element to make more efficient
+     * @see http://www.jetbrains.org/intellij/sdk/docs/reference_guide/frameworks_and_external_apis/xml_dom_api.html?search=xml
+     * */
     private final Map<PsiFile, T> holder = Maps.newConcurrentMap();
-    private final AtomicBoolean initCheck = new AtomicBoolean(false);
-    private final String rootTagName;
+    public final String rootTagName;
     private final Class<T> clazz;
 
-    public ConfHolder(Class<T> clazz) {
+    protected ConfHolder(Class<T> clazz) {
         this.clazz = clazz;
-        DomRoot domRoot = clazz.getAnnotation(DomRoot.class);
-        this.rootTagName = domRoot == null ? Javas.getFirstLowerFileName(clazz.getSimpleName()) : domRoot.value();
+        this.rootTagName = Javas.getFirstLowerFileName(clazz.getSimpleName());
     }
 
     /**
-     * get and cache mapper dom element
-     * @param psiFile mapper file
+     * get and cached dom element
+     * @param psiFile xml file
      * @return mapper dom element
      */
     @Nullable
-    public T getMapperDomElement(@NotNull PsiFile psiFile) {
+    public T getDomElement(@NotNull PsiFile psiFile) {
         if (holder.containsKey(psiFile)) {
             return holder.get(psiFile);
         } else {
@@ -49,5 +49,13 @@ public abstract class ConfHolder<T extends DomElement> {
             if (dom != null) { holder.put(psiFile, dom); }
             return dom;
         }
+    }
+
+    /**
+     * get all cached dom elements
+     * @return dom elements
+     */
+    public Collection<T> getAllDomElements() {
+        return holder.values();
     }
 }

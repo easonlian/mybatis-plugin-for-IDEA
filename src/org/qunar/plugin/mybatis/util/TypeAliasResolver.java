@@ -278,5 +278,5 @@ public enum TypeAliasResolver {
      * @return all type aliases <code>Map&lt;alias, qualifiedClassName&gt;</code>
      */
     @NotNull
-    public abstract Map<String, String> resolve(@NotNull Project project);
+    protected abstract Map<String, String> resolve(@NotNull Project project);
 }

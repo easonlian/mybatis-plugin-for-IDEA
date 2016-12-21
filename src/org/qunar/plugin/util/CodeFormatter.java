@@ -21,6 +21,7 @@ public class CodeFormatter {
      * @param psiElement psi element
      * @param language format language
      */
+    @SuppressWarnings("WeakerAccess")
     public static void format(@NotNull PsiElement psiElement, @NotNull Language language) {
         PsiFile psiFile = psiElement.getContainingFile();
         CodeFormatterFacade formatterFacade = new CodeFormatterFacade(new CodeStyleSettings(), language);

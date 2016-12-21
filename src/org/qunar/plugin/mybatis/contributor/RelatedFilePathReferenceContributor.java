@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.qunar.plugin.mybatis.reference.ClassPathRelatedFileReference;
-import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.ConfigConfHolder;
 
 
 /**
@@ -29,7 +29,7 @@ public class RelatedFilePathReferenceContributor extends PsiReferenceContributor
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-        ElementPattern<XmlTag> rootTagPattern = XmlPatterns.xmlTag().withName(DomElements.CONFIG_ROOT_TAG_NAME);
+        ElementPattern<XmlTag> rootTagPattern = XmlPatterns.xmlTag().withName(ConfigConfHolder.INSTANCE.rootTagName);
         ElementPattern<XmlTag> mappersTagPattern = XmlPatterns.xmlTag().withName("mappers").withParent(rootTagPattern);
         ElementPattern<XmlTag> mapperTagPattern = XmlPatterns.xmlTag().withName("mapper").withParent(mappersTagPattern);
         ElementPattern<XmlAttribute> methodAttrPattern = XmlPatterns.xmlAttribute("resource").withParent(mapperTagPattern);

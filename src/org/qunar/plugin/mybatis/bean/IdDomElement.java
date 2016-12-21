@@ -11,5 +11,6 @@ import com.intellij.util.xml.GenericAttributeValue;
  */
 public interface IdDomElement<T> extends DomElement {
 
+    @SuppressWarnings("EmptyMethod")
     GenericAttributeValue<T> getId();
 }

@@ -34,7 +34,7 @@ public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
             return;
         }
 
-        Mapper mapperDom = MapperConfHolder.INSTANCE.getMapperDomElement(element.getContainingFile());
+        Mapper mapperDom = MapperConfHolder.INSTANCE.getDomElement(element.getContainingFile());
         if (mapperDom == null || mapperDom.getNamespace() == null
                 || mapperDom.getNamespace().getValue() == null) {
             return;

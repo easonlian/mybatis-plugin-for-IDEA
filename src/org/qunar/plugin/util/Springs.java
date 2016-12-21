@@ -58,7 +58,7 @@ public class Springs {
      */
     @NotNull
     public static Set<SpringBeanPointer> findSpringBeansByType(@NotNull Project project,
-                                                                @Nullable String qualifiedName) {
+                                                               @SuppressWarnings("SameParameterValue") @Nullable String qualifiedName) {
         final PsiClass psiClass = JavaService.getInstance(project).findClass(qualifiedName);
         return findSpringBeansByPredicate(project, new Predicate<SpringBeanPointer>() {
             @Override

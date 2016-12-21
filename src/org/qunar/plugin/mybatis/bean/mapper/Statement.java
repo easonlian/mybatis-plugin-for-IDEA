@@ -24,5 +24,5 @@ public interface Statement extends IdRefMethodDomElement {
     GenericAttributeValue<PsiClass> getParameterType();
     
     @TagValue
-    void setStringValue(String s);
+    void setStringValue(@SuppressWarnings("SameParameterValue") String s);
 }
