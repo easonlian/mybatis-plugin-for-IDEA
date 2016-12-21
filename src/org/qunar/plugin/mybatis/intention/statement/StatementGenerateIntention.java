@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.bean.mapper.Statement;
 import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.service.EditorService;
 import org.qunar.plugin.util.CodeFormatter;
 
@@ -60,7 +61,7 @@ abstract class StatementGenerateIntention implements IntentionAction {
             return false;
         }
         @SuppressWarnings("ConstantConditions")
-        Collection<Mapper> mapperDomList = DomElements.getMapperDomElements(method.getContainingClass());
+        Collection<Mapper> mapperDomList = MapperConfHolder.INSTANCE.getMapperDomElements(method.getContainingClass());
         if (mapperDomList.size() != 1) {
             return false;
         }
@@ -87,7 +88,7 @@ abstract class StatementGenerateIntention implements IntentionAction {
             return;
         }
         @SuppressWarnings("ConstantConditions")
-        Collection<Mapper> mapperDomList = DomElements.getMapperDomElements(method.getContainingClass());
+        Collection<Mapper> mapperDomList = MapperConfHolder.INSTANCE.getMapperDomElements(method.getContainingClass());
         if (mapperDomList.size() != 1) {
             return;
         }

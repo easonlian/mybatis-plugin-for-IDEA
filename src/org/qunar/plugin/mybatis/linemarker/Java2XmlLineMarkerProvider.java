@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.bean.mapper.Statement;
-import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.util.Icons;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class Java2XmlLineMarkerProvider extends AbstractMapperMakerProvider {
             return;
         }
         PsiClass mapperClass = (PsiClass) element;
-        Collection<Mapper> mapperDomElements = DomElements.getMapperDomElements(mapperClass);
+        Collection<Mapper> mapperDomElements = MapperConfHolder.INSTANCE.getMapperDomElements(mapperClass);
 
         for (Mapper mapperDom : mapperDomElements) {
             //  add interface 2 mapper

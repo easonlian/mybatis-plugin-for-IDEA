@@ -25,7 +25,7 @@ public abstract class ConfHolder<T extends DomElement> {
      * hold mapper dom element to make more efficient
      * @see http://www.jetbrains.org/intellij/sdk/docs/reference_guide/frameworks_and_external_apis/xml_dom_api.html?search=xml
      * */
-    private final Map<PsiFile, T> holder = Maps.newConcurrentMap();
+    protected final Map<PsiFile, T> holder = Maps.newConcurrentMap();
     public final String rootTagName;
     private final Class<T> clazz;
 

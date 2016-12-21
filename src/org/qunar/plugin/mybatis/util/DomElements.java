@@ -1,20 +1,13 @@
 package org.qunar.plugin.mybatis.util;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.sql.psi.SqlFile;
-import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomService;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
@@ -25,45 +18,12 @@ import org.qunar.plugin.mybatis.util.domchecker.SelectChecker;
 import org.qunar.plugin.mybatis.util.domchecker.UpdateChecker;
 import org.qunar.plugin.util.XmlUtils;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * author: jianyu.lin  Date: 16-11-26.
  */
 public class DomElements {
-
-    /* is init mapper xmls */
-    private static final AtomicBoolean initCheck = new AtomicBoolean(false);
-
-    /**
-     * get all mapping mapper xml
-     * @param mapperClass class
-     * @return mapper dom elements
-     */
-    @NotNull
-    public static Collection<Mapper> getMapperDomElements(@NotNull final PsiClass mapperClass) {
-        if (!initCheck.get()) {
-            return ApplicationManager.getApplication().runReadAction(new Computable<Collection<Mapper>>() {
-                @Override
-                public Collection<Mapper> compute() {
-                    List<DomFileElement<Mapper>> mapperFiles = DomService.getInstance().getFileElements(Mapper.class,
-                            mapperClass.getProject(), GlobalSearchScope.projectScope(mapperClass.getProject()));
-                    List<Mapper> mapperDomList = Lists.newArrayList();
-                    for (DomFileElement<Mapper> mapperFile : mapperFiles) {
-                        PsiClass psiClass = XmlUtils.getAttrValue(mapperFile.getRootElement().getNamespace());
-                        if (mapperClass == psiClass) {
-                            mapperDomList.add(mapperFile.getRootElement());
-                        }
-                    }
-                    return mapperDomList;
-                }
-            });
-        } else {
-            return getMapperDomElementByNamespace(mapperClass.getQualifiedName());
-        }
-    }
 
     /**
      * checkMapper dom elements
@@ -159,25 +119,5 @@ public class DomElements {
     private static boolean isMybatisXmlFile(XmlFile xmlFile, String rootTagName) {
         return xmlFile.getRootTag() != null &&
                 StringUtils.equals(xmlFile.getRootTag().getName(), rootTagName);
-    }
-
-    /**
-     * get and cache mapper dom element
-     * @return mapper dom element
-     */
-    @NotNull
-    private static Collection<Mapper> getMapperDomElementByNamespace(final String namespace) {
-        return Collections2.filter(MapperConfHolder.INSTANCE.getAllDomElements(), new Predicate<Mapper>() {
-            @Override
-            public boolean apply(Mapper mapper) {
-                if (mapper.getXmlTag() == null ||
-                        !MapperConfHolder.INSTANCE.rootTagName.equals(mapper.getXmlTag().getName())) {
-                    // clear and reload cache
-                    initCheck.set(false);
-                    return false;
-                }
-                return StringUtils.equals(mapper.getNamespace().getStringValue(), namespace);
-            }
-        });
     }
 }

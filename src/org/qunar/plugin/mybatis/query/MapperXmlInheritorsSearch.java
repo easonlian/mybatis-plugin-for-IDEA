@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.bean.mapper.Statement;
 import org.qunar.plugin.mybatis.util.DomElements;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.util.XmlUtils;
 
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class MapperXmlInheritorsSearch implements QueryExecutor<XmlElement, Defi
     @SuppressWarnings("SameReturnValue")
     private boolean processClass(@NotNull PsiClass mapperClass,
                                  @NotNull final Processor<XmlElement> consumer) {
-        Collection<Mapper> mapperDomElements = DomElements.getMapperDomElements(mapperClass);
+        Collection<Mapper> mapperDomElements = MapperConfHolder.INSTANCE.getMapperDomElements(mapperClass);
         for (final Mapper mapperDom : mapperDomElements) {
             if (mapperDom.getXmlElement() != null) {
                 consumer.process(mapperDom.getXmlElement());
@@ -77,7 +78,8 @@ public class MapperXmlInheritorsSearch implements QueryExecutor<XmlElement, Defi
         if (mapperMethod.getContainingClass() == null) {
             return Boolean.TRUE;
         }
-        Collection<Mapper> mapperDomElements = DomElements.getMapperDomElements(mapperMethod.getContainingClass());
+        Collection<Mapper> mapperDomElements = MapperConfHolder.INSTANCE
+                .getMapperDomElements(mapperMethod.getContainingClass());
         for (final Mapper mapperDom : mapperDomElements) {
             if (mapperDom.getXmlElement() != null) {
                 List<Statement> statements = DomElements.collectStatements(mapperDom);

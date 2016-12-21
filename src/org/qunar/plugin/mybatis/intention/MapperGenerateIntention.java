@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.mybatis.ui.CreateMapperXmlDialog;
-import org.qunar.plugin.mybatis.util.DomElements;
 import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.service.EditorService;
 
@@ -109,7 +108,7 @@ public class MapperGenerateIntention implements IntentionAction {
             return null;
         }
         PsiClass psiClass = javaFile.getClasses()[0];
-        if (!DomElements.getMapperDomElements(psiClass).isEmpty()) {
+        if (!MapperConfHolder.INSTANCE.getMapperDomElements(psiClass).isEmpty()) {
             return null;
         }
         return psiClass;
