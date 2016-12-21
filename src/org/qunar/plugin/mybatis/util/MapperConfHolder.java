@@ -6,6 +6,7 @@ package org.qunar.plugin.mybatis.util;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xml.DomFileElement;
@@ -41,10 +42,10 @@ public class MapperConfHolder extends ConfHolder<Mapper> {
      */
     @NotNull
     public Collection<Mapper> getMapperDomElements(@NotNull final PsiClass mapperClass) {
-        if (!initCheck.get()) {
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-                @Override
-                public void run() {
+        return ApplicationManager.getApplication().runReadAction(new Computable<Collection<Mapper>>() {
+            @Override
+            public Collection<Mapper> compute() {
+                if (!initCheck.get()) {
                     List<DomFileElement<Mapper>> mapperFiles = DomService.getInstance().getFileElements(Mapper.class,
                             mapperClass.getProject(), GlobalSearchScope.projectScope(mapperClass.getProject()));
                     for (DomFileElement<Mapper> mapperFile : mapperFiles) {
@@ -55,9 +56,9 @@ public class MapperConfHolder extends ConfHolder<Mapper> {
                     }
                     initCheck.set(true);
                 }
-            });
-        }
-        return getMapperDomElementByNamespace(mapperClass.getQualifiedName());
+                return getMapperDomElementByNamespace(mapperClass.getQualifiedName());
+            }
+        });
     }
 
     /**
