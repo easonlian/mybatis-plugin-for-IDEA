@@ -15,11 +15,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.sql.psi.SqlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.qunar.plugin.bean.ModuleSetting;
 import org.qunar.plugin.service.EditorService;
-import org.qunar.plugin.util.Modules;
-
-import java.util.List;
 
 /**
  * generate mapper java interface
@@ -44,6 +40,8 @@ public class JavaGenerator extends AbstractGenerator {
 
     /**
      * {@inheritDoc}
+     * PsiClass createdClass = CreateClassUtil.createClassFromCustomTemplate(
+     *  generateDir, moduleSetting.getModule(), javaName, DEFAULT_CLASS_TEMPLATE);
      * @return psi class
      */
     @Nullable
@@ -56,15 +54,12 @@ public class JavaGenerator extends AbstractGenerator {
         return ApplicationManager.getApplication().runWriteAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
-//                PsiClass createdClass = CreateClassUtil.createClassFromCustomTemplate(
-//                        generateDir, moduleSetting.getModule(), javaName, DEFAULT_CLASS_TEMPLATE);
                 PsiClass createdClass = CreateFromUsageUtils.createClass(CreateClassKind.INTERFACE,
                         generateDir, javaName, generateDir.getManager(), generateDir, null, null);
                 if (createdClass == null) {
                     return null;
                 }
                 EditorService.getInstance(project).scrollTo(createdClass);
-                System.out.println(createdClass.getContainingFile().getVirtualFile().getPath());
                 return createdClass;
             }
         });

@@ -37,8 +37,8 @@ public class XmlGenerator extends AbstractGenerator {
         this.mapperClass = mapperClass;
         relatedPath = relatedPath.startsWith("/") ? relatedPath.substring(1, relatedPath.length()) :relatedPath;
         int lastIndex = relatedPath.lastIndexOf("/");
-        this.fileName = lastIndex < 0 ? "" : relatedPath.substring(0, lastIndex);
-        this.dirPath = relatedPath.substring(lastIndex + 1, relatedPath.length());
+        this.dirPath = lastIndex < 0 ? "" : relatedPath.substring(0, lastIndex);
+        this.fileName = relatedPath.substring(lastIndex + 1, relatedPath.length());
     }
 
     /**

@@ -45,17 +45,16 @@ public class SqlGenerateAction extends AnAction {
 
         System.out.println(sqlFile);
 
-        String qualifiedName = "org.qunar.temp.hi.TestClass";
+        String qualifiedName = "org.qunar.dao.SupplierDao";
 
         JavaGenerator javaGenerator = new JavaGenerator(project, sqlFile, qualifiedName);
         PsiClass generateClass = javaGenerator.generate();
-        System.out.println(generateClass);
 
         if (generateClass == null) {
             return;
         }
 
-        String relatedPath = "mybatis/mapper";
+        String relatedPath = "mybatis/mapper/SupplierMapper";
         XmlGenerator xmlGenerator = new XmlGenerator(project, generateClass, sqlFile, relatedPath);
         XmlFile xmlFile = xmlGenerator.generate();
         System.out.println(xmlFile);
@@ -83,6 +82,7 @@ public class SqlGenerateAction extends AnAction {
      */
     @Nullable
     private SqlFile getCurrentEditFile(Project project, Editor editor) {
+        if (project == null || editor == null) return null;
         VirtualFile virtualFile = ((EditorEx) editor).getVirtualFile();
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
         if (!(psiFile instanceof SqlFile)) return null;
