@@ -173,8 +173,9 @@ public class CreateMapperXmlDialog extends DialogWrapper {
      * @param fileName name of psi file
      * @return mapper psi file
      */
+    //  todo jianyu.lin move to standalone
     @NotNull
-    private PsiFile generateMapperFile(@NotNull String fileName) {
+    public PsiFile generateMapperFile(@NotNull String fileName) {
         String mapperContent = String.format(TEMPLATE, psiClass.getQualifiedName());
         PsiFile rawFile = PsiFileFactory.getInstance(project)
                 .createFileFromText(XMLLanguage.INSTANCE, mapperContent);

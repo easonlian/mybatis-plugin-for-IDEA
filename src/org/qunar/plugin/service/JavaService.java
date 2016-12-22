@@ -14,6 +14,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.JavaPsiFacadeEx;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -37,13 +38,13 @@ public class JavaService {
     private final Project project;
     private final JavaPsiFacade javaPsiFacade;
     private final JavaPsiFacadeEx javaPsiFacadeEx;
-//    private final PsiElementFactory elementFactory;
+    private final PsiElementFactory elementFactory;
     
     private JavaService(Project project) {
         this.project = project;
         this.javaPsiFacade = JavaPsiFacade.getInstance(project);
         this.javaPsiFacadeEx = JavaPsiFacadeEx.getInstanceEx(project);
-//        this.elementFactory = JavaPsiFacade.getElementFactory(project);
+        this.elementFactory = JavaPsiFacade.getElementFactory(project);
     }
     
     public static JavaService getInstance(Project project) {
@@ -192,5 +193,25 @@ public class JavaService {
                 return javaPsiFacade.findPackage(qualifiedName);
             }
         });
+    }
+
+    /**
+     * generate java class
+     * @param qualifiedName qualified name
+     * @return psi class
+     */
+    @NotNull
+    public PsiClass generateInterface(@NotNull String qualifiedName) {
+        return elementFactory.createInterface(qualifiedName);
+    }
+
+    /**
+     * generate java interface
+     * @param qualifiedName qualified name
+     * @return psi class
+     */
+    @NotNull
+    public PsiClass generateClass(@NotNull String qualifiedName) {
+        return elementFactory.createClass(qualifiedName);
     }
 }

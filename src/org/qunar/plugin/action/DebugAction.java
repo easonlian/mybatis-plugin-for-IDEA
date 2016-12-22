@@ -5,7 +5,9 @@ package org.qunar.plugin.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import org.qunar.plugin.service.EditorService;
 
 /**
  *
@@ -18,6 +20,6 @@ public class DebugAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getProject();
-        System.out.println(project + "\n");
+        if (project == null) { return; }
     }
 }
