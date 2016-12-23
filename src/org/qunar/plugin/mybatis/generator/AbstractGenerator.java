@@ -5,7 +5,7 @@ package org.qunar.plugin.mybatis.generator;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.sql.psi.SqlFile;
+import com.intellij.sql.psi.SqlElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.bean.ModuleSetting;
@@ -22,13 +22,13 @@ public abstract class AbstractGenerator {
     @NotNull
     protected final Project project;
     @NotNull
-    protected final SqlFile sqlFile;
+    protected final SqlElement sqlElement;
     protected final ModuleSetting moduleSetting;
 
-    public AbstractGenerator(@NotNull Project project, @NotNull SqlFile sqlFile) {
+    public AbstractGenerator(@NotNull Project project, @NotNull SqlElement sqlElement) {
         this.project = project;
-        this.sqlFile = sqlFile;
-        moduleSetting = Modules.getModuleSettingByElement(sqlFile);
+        this.sqlElement = sqlElement;
+        moduleSetting = Modules.getModuleSettingByElement(sqlElement);
     }
 
     /**

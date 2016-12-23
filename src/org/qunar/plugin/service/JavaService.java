@@ -15,7 +15,9 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.JavaPsiFacadeEx;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +40,7 @@ public class JavaService {
     private final Project project;
     private final JavaPsiFacade javaPsiFacade;
     private final JavaPsiFacadeEx javaPsiFacadeEx;
-    private final PsiElementFactory elementFactory;
+    public final PsiElementFactory elementFactory;
     
     private JavaService(Project project) {
         this.project = project;
@@ -213,5 +215,16 @@ public class JavaService {
     @NotNull
     public PsiClass generateClass(@NotNull String qualifiedName) {
         return elementFactory.createClass(qualifiedName);
+    }
+
+    /**
+     * generate java method
+     * @param psiClass containing class
+     * @param returnType return type
+     * @param name method name
+     * @return psi method
+     */
+    public PsiMethod generateMethod(@NotNull PsiClass psiClass, PsiType returnType, String name) {
+        return elementFactory.createMethod(name, returnType, psiClass);
     }
 }

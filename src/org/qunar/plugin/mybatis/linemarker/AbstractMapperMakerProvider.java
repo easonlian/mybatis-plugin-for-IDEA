@@ -6,6 +6,7 @@ package org.qunar.plugin.mybatis.linemarker;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,7 @@ import org.qunar.plugin.mybatis.bean.mapper.Statement;
 import org.qunar.plugin.mybatis.util.DomElements;
 import org.qunar.plugin.util.XmlUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,6 +25,21 @@ import java.util.List;
  * Date: 2016/11/25 Time: 下午10:19
  */
 abstract class AbstractMapperMakerProvider extends RelatedItemLineMarkerProvider {
+
+    /**
+     * one mapper xml deal only once
+     * @param elements changed elements
+     * @param result marker result
+     * @param forNavigation navigation
+     */
+    @Override
+    public void collectNavigationMarkers(@NotNull List<PsiElement> elements,
+                                         Collection<? super RelatedItemLineMarkerInfo> result, boolean forNavigation) {
+        if (elements.size() > 0) {
+            elements = Lists.newArrayList(elements.get(0));
+        }
+        super.collectNavigationMarkers(elements, result, forNavigation);
+    }
 
     /**
      * build mapping method marks

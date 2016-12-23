@@ -7,8 +7,10 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -32,10 +34,10 @@ public class Java2XmlLineMarkerProvider extends AbstractMapperMakerProvider {
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element,
                                             Collection<? super RelatedItemLineMarkerInfo> result) {
-        if (!(element instanceof PsiClass)) {
+        PsiClass mapperClass = getCurrentPsiClass(element);
+        if (mapperClass == null) {
             return;
         }
-        PsiClass mapperClass = (PsiClass) element;
         Collection<Mapper> mapperDomElements = MapperConfHolder.INSTANCE.getMapperDomElements(mapperClass);
 
         for (Mapper mapperDom : mapperDomElements) {
@@ -46,6 +48,29 @@ public class Java2XmlLineMarkerProvider extends AbstractMapperMakerProvider {
             //  add method 2 statement
             result.addAll(buildMethodLineMarkers(mapperDom));
         }
+    }
+
+    /**
+     * get psi class by current element
+     * @param element element
+     * @return psi class
+     */
+    @Nullable
+    private PsiClass getCurrentPsiClass(PsiElement element) {
+        PsiElement tempElement = element;
+        while (tempElement != null && !(tempElement instanceof PsiDirectory)) {
+            if (tempElement instanceof PsiClass) {
+                return (PsiClass) tempElement;
+            }
+            if (tempElement instanceof PsiJavaFile) {
+                PsiClass[] psiClasses = ((PsiJavaFile) tempElement).getClasses();
+                if (psiClasses.length > 0) {
+                    return psiClasses[0];
+                }
+            }
+            tempElement = tempElement.getParent();
+        }
+        return null;
     }
 
     /**

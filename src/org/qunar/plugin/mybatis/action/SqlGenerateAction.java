@@ -14,10 +14,15 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.sql.psi.SqlCreateTableStatement;
+import com.intellij.sql.psi.SqlElement;
 import com.intellij.sql.psi.SqlFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.generator.JavaGenerator;
 import org.qunar.plugin.mybatis.generator.XmlGenerator;
+
+import java.util.List;
 
 /**
  * generator sql action
@@ -42,20 +47,22 @@ public class SqlGenerateAction extends AnAction {
 
         SqlFile sqlFile = getCurrentEditFile(project, editor);
         if (sqlFile == null) return;
+        SqlElement sqlElement = getFirstCreateTableStatement(sqlFile.getDdl());
+        if (sqlElement == null) return;
 
         System.out.println(sqlFile);
 
-        String qualifiedName = "org.qunar.dao.SupplierDao";
+        String qualifiedName = "org.qunar.temp.dao.SupplierDao";
 
-        JavaGenerator javaGenerator = new JavaGenerator(project, sqlFile, qualifiedName);
+        JavaGenerator javaGenerator = new JavaGenerator(project, sqlElement, qualifiedName);
         PsiClass generateClass = javaGenerator.generate();
 
         if (generateClass == null) {
             return;
         }
 
-        String relatedPath = "mybatis/mapper/SupplierMapper";
-        XmlGenerator xmlGenerator = new XmlGenerator(project, generateClass, sqlFile, relatedPath);
+        String relatedPath = "mybatis/mapper/temp/SupplierMapper";
+        XmlGenerator xmlGenerator = new XmlGenerator(project, generateClass, sqlElement, relatedPath);
         XmlFile xmlFile = xmlGenerator.generate();
         System.out.println(xmlFile);
     }
@@ -71,7 +78,27 @@ public class SqlGenerateAction extends AnAction {
         SqlFile sqlFile = getCurrentEditFile(project, editor);
         if (sqlFile == null) {
             e.getPresentation().setVisible(false);
+        } else {
+            SqlElement sqlElement = getFirstCreateTableStatement(sqlFile.getDdl());
+            if (sqlElement == null) {
+                e.getPresentation().setVisible(false);
+            }
         }
+    }
+
+    /**
+     * peek first create table sql
+     * @param sqlElements ddl list
+     * @return create table ddl
+     */
+    @Nullable
+    private SqlElement getFirstCreateTableStatement(@NotNull List<SqlElement> sqlElements) {
+        for (SqlElement sqlElement : sqlElements) {
+            if (sqlElement instanceof SqlCreateTableStatement) {
+                return sqlElement;
+            }
+        }
+        return null;
     }
 
     /**

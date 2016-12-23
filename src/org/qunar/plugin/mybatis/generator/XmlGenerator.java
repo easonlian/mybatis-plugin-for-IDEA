@@ -4,14 +4,18 @@
 package org.qunar.plugin.mybatis.generator;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.XmlElementFactory;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.sql.psi.SqlFile;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.sql.psi.SqlElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.ui.CreateMapperXmlDialog;
@@ -32,8 +36,8 @@ public class XmlGenerator extends AbstractGenerator {
     private final String dirPath;
 
     public XmlGenerator(@NotNull Project project, @NotNull PsiClass mapperClass,
-                        @NotNull SqlFile sqlFile, @NotNull String relatedPath) {
-        super(project, sqlFile);
+                        @NotNull SqlElement sqlElement, @NotNull String relatedPath) {
+        super(project, sqlElement);
         this.mapperClass = mapperClass;
         relatedPath = relatedPath.startsWith("/") ? relatedPath.substring(1, relatedPath.length()) :relatedPath;
         int lastIndex = relatedPath.lastIndexOf("/");
@@ -57,8 +61,42 @@ public class XmlGenerator extends AbstractGenerator {
             public XmlFile compute() {
                 CreateMapperXmlDialog dialog = new CreateMapperXmlDialog(project, mapperClass);
                 XmlFile xmlFile = (XmlFile) dialog.generateMapperFile(fileName + ".xml");
-                generateDir.add(xmlFile);
+                xmlFile = (XmlFile) generateDir.add(xmlFile);
+                generateStatement(xmlFile);
                 return xmlFile;
+            }
+        });
+    }
+
+    /**
+     * generate mapper statement
+     * @param xmlFile mapper xml file
+     */
+    private void generateStatement(final XmlFile xmlFile) {
+        WriteCommandAction.runWriteCommandAction(project, new Runnable() {
+            @Override
+            public void run() {
+                XmlTag rootTag = xmlFile.getRootTag();
+                if (rootTag == null) return;
+
+                @SuppressWarnings("ConstantConditions")
+                String sql = String.format(
+                        "<select id=\"selectList\" parameterType=\"%s\">\n" +
+                            "      SELECT * FROM %s\n" +
+                        "    </select>",
+                        mapperClass.getQualifiedName().substring(0, mapperClass.getName().length() - 3), sqlElement.getName());
+                XmlTag selectListTag = XmlElementFactory.getInstance(project).createTagFromText(sql);
+                rootTag.add(selectListTag);
+
+                sql = String.format(
+                        "<delete id=\"delete\" parameterType=\"%s\">\n" +
+                                "      DELETE FROM %s WHERE id = #{id}\n" +
+                                "    </delete>",
+                        mapperClass.getQualifiedName().substring(0, mapperClass.getName().length() - 3), sqlElement.getName());
+                XmlTag deleteTag = XmlElementFactory.getInstance(project).createTagFromText(sql);
+                rootTag.add(deleteTag);
+
+                CodeStyleManager.getInstance(project).reformat(xmlFile.getRootTag());
             }
         });
     }

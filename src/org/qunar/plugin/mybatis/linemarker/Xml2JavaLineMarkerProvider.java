@@ -8,7 +8,6 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
@@ -30,7 +29,7 @@ public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element,
                                             Collection<? super RelatedItemLineMarkerInfo> result) {
-        if (!(element instanceof XmlFile) || !DomElements.isMapperXmlFile(element.getContainingFile())) {
+        if (!DomElements.isMapperXmlFile(element.getContainingFile())) {
             return;
         }
 
