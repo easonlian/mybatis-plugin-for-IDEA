@@ -54,9 +54,9 @@
                          groupName="Mybatis" level="WARNING" order="first"
                          implementationClass="org.qunar.plugin.mybatis.inspection.MybatisMapperInspection"/>
 
-        <codeInsight.lineMarkerProvider language="XML" order="last"
+        <codeInsight.lineMarkerProvider language="XML" order="first"
                                         implementationClass="org.qunar.plugin.mybatis.linemarker.Xml2JavaLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="JAVA" order="last"
+        <codeInsight.lineMarkerProvider language="JAVA" order="first"
                                         implementationClass="org.qunar.plugin.mybatis.linemarker.Java2XmlLineMarkerProvider"/>
 
         <psi.referenceContributor order="last" language="XML"
