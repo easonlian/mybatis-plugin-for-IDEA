@@ -15,10 +15,15 @@ import com.intellij.psi.XmlElementFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.sql.psi.SqlCreateTableStatement;
 import com.intellij.sql.psi.SqlElement;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.qunar.plugin.mybatis.ui.CreateMapperXmlDialog;
+import org.qunar.plugin.mybatis.bean.model.CreateTableDdl;
+import org.qunar.plugin.mybatis.util.DbDdlParser;
 
 /**
  * generate mapper sql xml
@@ -26,7 +31,7 @@ import org.qunar.plugin.mybatis.ui.CreateMapperXmlDialog;
  * Author: jianyu.lin
  * Date: 2016/12/22 Time: 下午2:59
  */
-public class XmlGenerator extends AbstractGenerator {
+public class XmlVelocityGenerator extends AbstractGenerator {
 
     @NotNull
     private final PsiClass mapperClass;
@@ -34,15 +39,18 @@ public class XmlGenerator extends AbstractGenerator {
     private final String fileName;
     @NotNull
     private final String dirPath;
+    @NotNull
+    private final SqlCreateTableStatement myCreateTableDdl;
 
-    public XmlGenerator(@NotNull Project project, @NotNull PsiClass mapperClass,
-                        @NotNull SqlElement sqlElement, @NotNull String relatedPath) {
+    public XmlVelocityGenerator(@NotNull Project project, @NotNull PsiClass mapperClass,
+                                @NotNull SqlElement sqlElement, @NotNull String relatedPath) {
         super(project, sqlElement);
         this.mapperClass = mapperClass;
         relatedPath = relatedPath.startsWith("/") ? relatedPath.substring(1, relatedPath.length()) :relatedPath;
         int lastIndex = relatedPath.lastIndexOf("/");
         this.dirPath = lastIndex < 0 ? "" : relatedPath.substring(0, lastIndex);
         this.fileName = relatedPath.substring(lastIndex + 1, relatedPath.length());
+        this.myCreateTableDdl = (SqlCreateTableStatement) sqlElement;
     }
 
     /**
@@ -59,11 +67,17 @@ public class XmlGenerator extends AbstractGenerator {
         return ApplicationManager.getApplication().runWriteAction(new Computable<XmlFile>() {
             @Override
             public XmlFile compute() {
-                CreateMapperXmlDialog dialog = new CreateMapperXmlDialog(project, mapperClass);
-                XmlFile xmlFile = (XmlFile) dialog.generateMapperFile(fileName + ".xml");
-                xmlFile = (XmlFile) generateDir.add(xmlFile);
-                generateStatement(xmlFile);
-                return xmlFile;
+
+                CreateTableDdl createTableDdl = DbDdlParser.parseCreateTableDdl(myCreateTableDdl);
+
+                VelocityEngine vmEngine = new VelocityEngine();
+                vmEngine.init();
+                Template t = vmEngine.getTemplate("template/mapper.vm");
+
+
+                VelocityContext context = new VelocityContext();
+                context.put("columns", myCreateTableDdl.getDeclaredColumns());
+                return null;
             }
         });
     }

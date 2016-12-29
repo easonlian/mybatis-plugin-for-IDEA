@@ -97,7 +97,8 @@
         <action id="qunarPlugin.action.DebugAction" class="org.qunar.plugin.action.DebugAction"
                 text="debugAction" description="Leave a debug point"/>
         <action id="mybatis.SqlGenerateAction" class="org.qunar.plugin.mybatis.action.SqlGenerateAction"
-                text="Mybatis Generate..." description="trigger mybatis generator action" icon="/icons/mybatis/generate.png">
+                text="Mybatis Generate..." description="trigger mybatis generator action"
+                icon="/icons/mybatis/generate.png">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </action>
     </actions>

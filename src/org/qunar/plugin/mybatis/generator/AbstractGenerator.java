@@ -22,13 +22,13 @@ public abstract class AbstractGenerator {
     @NotNull
     protected final Project project;
     @NotNull
-    protected final SqlElement sqlElement;
+    protected final SqlElement myCreateTableDdl;
     protected final ModuleSetting moduleSetting;
 
-    public AbstractGenerator(@NotNull Project project, @NotNull SqlElement sqlElement) {
+    public AbstractGenerator(@NotNull Project project, @NotNull SqlElement myCreateTableDdl) {
         this.project = project;
-        this.sqlElement = sqlElement;
-        moduleSetting = Modules.getModuleSettingByElement(sqlElement);
+        this.myCreateTableDdl = myCreateTableDdl;
+        moduleSetting = Modules.getModuleSettingByElement(myCreateTableDdl);
     }
 
     /**

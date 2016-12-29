@@ -20,7 +20,7 @@ import com.intellij.sql.psi.SqlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.generator.JavaGenerator;
-import org.qunar.plugin.mybatis.generator.XmlGenerator;
+import org.qunar.plugin.mybatis.generator.XmlVelocityGenerator;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class SqlGenerateAction extends AnAction {
         }
 
         String relatedPath = "mybatis/mapper/temp/SupplierMapper";
-        XmlGenerator xmlGenerator = new XmlGenerator(project, generateClass, sqlElement, relatedPath);
+        XmlVelocityGenerator xmlGenerator = new XmlVelocityGenerator(project, generateClass, sqlElement, relatedPath);
         XmlFile xmlFile = xmlGenerator.generate();
         System.out.println(xmlFile);
     }

@@ -99,6 +99,7 @@ public class JavaGenerator extends AbstractGenerator {
                 PsiClass javaList = JavaService.getInstance(project).findClass("java.util.List", GlobalSearchScope.allScope(project));
                 if (javaList != null) {
                     PsiImportStatement importStatement = elementFactory.createImportStatement(javaList);
+                    //noinspection ConstantConditions
                     ((PsiJavaFile) daoClass.getParent()).getImportList().add(importStatement);
                 }
 
