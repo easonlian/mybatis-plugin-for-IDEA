@@ -14,15 +14,13 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>v1.4.6</p>
+        <ur>
+          <li>bug fix</li>
+        </ul>
       <p>v1.4.4</p>
       <ur>
         <li>fix some bugs</li>
-      </ul>
-      <p>v1.4.2</p>
-      <ur>
-        <li>fix bug: about #{} ${}, support primitive params</li>
-        <li>fix bug: isMybatisFile util may cause StackOverFlow</li>
-        <li>fix bug: can't find base resource dirs when generate new mapper xml</li>
       </ul>
     ]]>
     </change-notes>
