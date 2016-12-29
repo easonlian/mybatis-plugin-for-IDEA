@@ -3,10 +3,16 @@
 */
 package org.qunar.plugin.mybatis.linemarker;
 
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +23,7 @@ import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.util.Icons;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * navigate from java interface 2 mapper xml
@@ -25,6 +32,22 @@ import java.util.Collection;
  * Date: 2016/11/25 Time: 下午7:08
  */
 public class Java2XmlLineMarkerProvider extends AbstractMapperMakerProvider {
+
+    /**
+     * {@inheritDoc}
+     * @param elements changed elements
+     * @return psiClass
+     */
+    @NotNull
+    @Override
+    protected List<PsiElement> chooseElement(@NotNull List<PsiElement> elements) {
+        for (PsiElement element : elements) {
+            if (element instanceof PsiClass) {
+                return Lists.newArrayList(element);
+            }
+        }
+        return Lists.newArrayList();
+    }
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element,

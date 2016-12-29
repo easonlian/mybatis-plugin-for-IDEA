@@ -29,6 +29,11 @@ import java.util.List;
  */
 public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
 
+    /**
+     * {@inheritDoc}
+     * @param elements changed elements
+     * @return root tag
+     */
     @NotNull
     @Override
     protected List<PsiElement> chooseElement(@NotNull List<PsiElement> elements) {

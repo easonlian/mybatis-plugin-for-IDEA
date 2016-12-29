@@ -39,10 +39,13 @@ abstract class AbstractMapperMakerProvider extends RelatedItemLineMarkerProvider
         super.collectNavigationMarkers(myElements, result, forNavigation);
     }
 
+    /**
+     * filter duplicate elements request
+     * @param elements changed elements
+     * @return choose correct element to build markers
+     */
     @NotNull
-    protected List<PsiElement> chooseElement(@NotNull List<PsiElement> elements) {
-        return elements.isEmpty() ? Lists.<PsiElement>newArrayList() : elements.subList(0, 1);
-    }
+    protected abstract List<PsiElement> chooseElement(@NotNull List<PsiElement> elements);
 
     /**
      * build mapping method marks
