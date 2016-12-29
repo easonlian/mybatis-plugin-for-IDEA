@@ -62,7 +62,7 @@
         <psi.referenceContributor order="last" language="XML"
                                   implementation="org.qunar.plugin.mybatis.contributor.RelatedFilePathReferenceContributor"/>
 
-        <definitionsScopedSearch order="last" implementation="org.qunar.plugin.mybatis.query.MapperXmlInheritorsSearch"/>
+        <definitionsScopedSearch order="first" implementation="org.qunar.plugin.mybatis.query.MapperXmlInheritorsSearch"/>
 
         <typedHandler order="first" implementation="org.qunar.plugin.mybatis.typehandler.MapperSqlParamTypedHandler"/>
 

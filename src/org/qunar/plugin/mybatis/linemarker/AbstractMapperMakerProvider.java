@@ -35,10 +35,11 @@ abstract class AbstractMapperMakerProvider extends RelatedItemLineMarkerProvider
     @Override
     public void collectNavigationMarkers(@NotNull List<PsiElement> elements,
                                          Collection<? super RelatedItemLineMarkerInfo> result, boolean forNavigation) {
+        List<PsiElement> myElements = Lists.newArrayList();
         if (elements.size() > 0) {
-            elements = Lists.newArrayList(elements.get(0));
+            myElements.add(elements.get(0));
         }
-        super.collectNavigationMarkers(elements, result, forNavigation);
+        super.collectNavigationMarkers(myElements, result, forNavigation);
     }
 
     /**
