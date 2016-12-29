@@ -4,7 +4,6 @@
 package org.qunar.plugin.mybatis.linemarker;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.psi.PsiClass;
@@ -21,7 +20,6 @@ import org.qunar.plugin.util.Icons;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * navigate from mapper xml 2 java interface
@@ -31,15 +29,13 @@ import java.util.Set;
  */
 public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
 
-    private Set<String> STATEMENT_TAG_NAMES = Sets.newHashSet("select", "insert", "update", "delete");
-
     @NotNull
     @Override
     protected List<PsiElement> chooseElement(@NotNull List<PsiElement> elements) {
         for (PsiElement element : elements) {
             if (element instanceof XmlTag) {
                 XmlTag xmlTag = (XmlTag) element;
-                if (STATEMENT_TAG_NAMES.contains(xmlTag.getName())) {
+                if (MapperConfHolder.INSTANCE.rootTagName.contains(xmlTag.getName())) {
                     return Lists.newArrayList(element);
                 }
             }
