@@ -6,12 +6,12 @@ package org.qunar.plugin.mybatis.util;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomService;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
 import org.qunar.plugin.util.ConfHolder;
@@ -22,14 +22,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * mapper dom cache util
+ *
  * Author: jianyu.lin
  * Date: 2016/12/19 Time: 下午6:07
  */
 public class MapperConfHolder extends ConfHolder<Mapper> {
 
-    /* is init mapper xmls */
-    private static final AtomicBoolean initCheck = new AtomicBoolean(false);
     public static final MapperConfHolder INSTANCE = new MapperConfHolder(Mapper.class);
+    private final AtomicBoolean initCheck = new AtomicBoolean(true);
 
     private MapperConfHolder(@NotNull Class<Mapper> clazz) {
         super(clazz);
@@ -45,46 +46,42 @@ public class MapperConfHolder extends ConfHolder<Mapper> {
         return ApplicationManager.getApplication().runReadAction(new Computable<Collection<Mapper>>() {
             @Override
             public Collection<Mapper> compute() {
-                if (!initCheck.get()) {
-                    List<DomFileElement<Mapper>> mapperFiles = DomService.getInstance().getFileElements(Mapper.class,
-                            mapperClass.getProject(), GlobalSearchScope.projectScope(mapperClass.getProject()));
-                    for (DomFileElement<Mapper> mapperFile : mapperFiles) {
-                        PsiClass psiClass = XmlUtils.getAttrValue(mapperFile.getRootElement().getNamespace());
-                        if (mapperClass == psiClass) {
-                            holder.put(mapperFile.getFile(), mapperFile.getRootElement());
-                        }
-                    }
-                    initCheck.set(true);
+                if (initCheck.getAndSet(false)) {
+                    initAllMappers(mapperClass.getProject());
                 }
-                return getMapperDomElementByNamespace(mapperClass.getQualifiedName());
+                return Collections2.filter(getAllDomElements(), new Predicate<Mapper>() {
+                    @Override
+                    public boolean apply(final Mapper mapper) {
+                        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+                            @Override
+                            public Boolean compute() {
+                                if (mapper.getXmlTag() == null || !rootTagName.equals(mapper.getXmlTag().getName())) {
+                                    initCheck.set(false);
+                                    return false;
+                                }
+                                mapper.getNamespace();
+                                PsiClass psiClass = XmlUtils.getAttrValue(mapper.getNamespace());
+                                return psiClass == mapperClass;
+                            }
+                        });
+                    }
+                });
             }
         });
     }
 
     /**
-     * get and cache mapper dom element
-     * @return mapper dom element
+     * reload all mappers
+     * @param project current project
      */
-    @NotNull
-    private Collection<Mapper> getMapperDomElementByNamespace(final String namespace) {
-        return Collections2.filter(MapperConfHolder.INSTANCE.getAllDomElements(), new Predicate<Mapper>() {
-            @Override
-            public boolean apply(final Mapper mapper) {
-                if (mapper.getXmlTag() == null ||
-                        !MapperConfHolder.INSTANCE.rootTagName.equals(mapper.getXmlTag().getName())) {
-                    // clear and reload cache
-                    initCheck.set(false);
-                    return false;
-                }
-                String mapperNamespace = ApplicationManager.getApplication()
-                        .runReadAction(new Computable<String>() {
-                            @Override
-                            public String compute() {
-                                return mapper.getNamespace().getStringValue();
-                            }
-                        });
-                return StringUtils.equals(mapperNamespace, namespace);
+    private void initAllMappers(Project project) {
+        List<DomFileElement<Mapper>> mapperFiles = DomService.getInstance()
+                .getFileElements(Mapper.class, project, GlobalSearchScope.projectScope(project));
+        for (DomFileElement<Mapper> mapperFile : mapperFiles) {
+            PsiClass psiClass = XmlUtils.getAttrValue(mapperFile.getRootElement().getNamespace());
+            if (psiClass != null) {
+                holder.put(mapperFile.getFile(), mapperFile.getRootElement());
             }
-        });
+        }
     }
 }

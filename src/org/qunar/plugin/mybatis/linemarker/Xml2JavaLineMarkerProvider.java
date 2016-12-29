@@ -3,11 +3,14 @@
 */
 package org.qunar.plugin.mybatis.linemarker;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.mapper.Mapper;
@@ -17,6 +20,8 @@ import org.qunar.plugin.mybatis.util.MapperConfHolder;
 import org.qunar.plugin.util.Icons;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * navigate from mapper xml 2 java interface
@@ -25,6 +30,22 @@ import java.util.Collection;
  * Date: 2016/11/25 Time: 下午7:08
  */
 public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
+
+    private Set<String> STATEMENT_TAG_NAMES = Sets.newHashSet("select", "insert", "update", "delete");
+
+    @NotNull
+    @Override
+    protected List<PsiElement> chooseElement(@NotNull List<PsiElement> elements) {
+        for (PsiElement element : elements) {
+            if (element instanceof XmlTag) {
+                XmlTag xmlTag = (XmlTag) element;
+                if (STATEMENT_TAG_NAMES.contains(xmlTag.getName())) {
+                    return Lists.newArrayList(element);
+                }
+            }
+        }
+        return Lists.newArrayList();
+    }
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element,
@@ -64,4 +85,6 @@ public class Xml2JavaLineMarkerProvider extends AbstractMapperMakerProvider {
                         .setTooltipText("Navigate to mapper java method: " + method.getName());
         return builder.createLineMarkerInfo(statement.getXmlTag());
     }
+
+
 }

@@ -6,6 +6,7 @@ package org.qunar.plugin.util;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.xml.GenericAttributeValue;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: jianyu.lin
@@ -19,6 +20,7 @@ public class XmlUtils {
      * @param <T> value type
      * @return value type instance
      */
+    @Nullable
     public static <T> T getAttrValue(final GenericAttributeValue<T> attributeValue) {
         return ApplicationManager.getApplication().runReadAction(new Computable<T>() {
             @Override
