@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
@@ -57,14 +58,14 @@ public class JavaGenerator extends AbstractGenerator {
      */
     @Nullable
     @Override
-    public PsiClass generate() {
+    public Pair<PsiClass, PsiClass> generate() {
         VirtualFile dirVirtualFile = moduleSetting.getJavaSources().get(0);
         PsiDirectory baseDir = PsiManager.getInstance(project).findDirectory(dirVirtualFile);
         final PsiDirectory generateDir = createOrFindDirectory(baseDir);
 
-        return ApplicationManager.getApplication().runWriteAction(new Computable<PsiClass>() {
+        return ApplicationManager.getApplication().runWriteAction(new Computable<Pair<PsiClass, PsiClass>>() {
             @Override
-            public PsiClass compute() {
+            public Pair<PsiClass, PsiClass> compute() {
                 final PsiClass daoClass = CreateFromUsageUtils.createClass(CreateClassKind.INTERFACE,
                         generateDir, daoName, generateDir.getManager(), generateDir, null, null);
 
@@ -74,12 +75,11 @@ public class JavaGenerator extends AbstractGenerator {
                 PsiClass beanClass = CreateClassUtil.createClassFromCustomTemplate(
                         generateDir, moduleSetting.getModule(), beanName, DEFAULT_CLASS_TEMPLATE);
                 if (beanClass == null) {
-                    return daoClass;
+                    return null;
                 }
-
                 generateMethods(daoClass, beanClass);
                 EditorService.getInstance(project).scrollTo(daoClass);
-                return daoClass;
+                return Pair.create(daoClass, beanClass);
             }
         });
     }

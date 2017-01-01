@@ -22,10 +22,15 @@ import org.qunar.plugin.mybatis.ui.CreateMapperXmlDialog;
 
 /**
  * generate mapper sql xml
+ * deprecated, replaced by XmlVelocityGenerator
+ * <br>
+ *
+ * @see XmlVelocityGenerator
  *
  * Author: jianyu.lin
  * Date: 2016/12/22 Time: 下午2:59
  */
+@Deprecated @SuppressWarnings("unused")
 public class XmlGenerator extends AbstractGenerator {
 
     @NotNull

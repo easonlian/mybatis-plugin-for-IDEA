@@ -10,6 +10,7 @@ package org.qunar.plugin.mybatis.bean.model;
 public class DbColumn {
 
     private String name;
+    private String propertyName;
     private String typeName;
 
     public String getName() {
@@ -18,6 +19,15 @@ public class DbColumn {
 
     public DbColumn setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public DbColumn setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
         return this;
     }
 
@@ -34,6 +44,7 @@ public class DbColumn {
     public String toString() {
         return "DbColumn{" +
                 "name='" + name + '\'' +
+                ", propertyName='" + propertyName + '\'' +
                 ", typeName='" + typeName + '\'' +
                 '}';
     }

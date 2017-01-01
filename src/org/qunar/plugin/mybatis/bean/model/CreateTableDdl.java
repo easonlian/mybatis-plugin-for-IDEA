@@ -15,10 +15,19 @@ import java.util.List;
  */
 public class CreateTableDdl {
 
+    private String dbName;
     private List<DbColumn> columns = Lists.newArrayList();
     private List<DbForeignKey> foreignKeys = Lists.newArrayList();
     private List<DbIndex> dbIndices = Lists.newArrayList();
     private List<DbKey> dbKeys = Lists.newArrayList();
+
+    public CreateTableDdl(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
 
     public List<DbColumn> getColumns() {
         return columns;
@@ -39,7 +48,8 @@ public class CreateTableDdl {
     @Override
     public String toString() {
         return "CreateTableDdl{" +
-                "columns=" + columns +
+                "dbName='" + dbName + '\'' +
+                ", columns=" + columns +
                 ", foreignKeys=" + foreignKeys +
                 ", dbIndices=" + dbIndices +
                 ", dbKeys=" + dbKeys +

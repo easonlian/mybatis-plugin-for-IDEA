@@ -41,6 +41,29 @@ public class Javas {
     }
 
     /**
+     * transform underline to upper letter
+     * @param rawName raw string
+     * @return transformed string
+     */
+    public static String transUnderline2UpperLetter(@NotNull String rawName) {
+        if (StringUtils.isEmpty(rawName)) {
+            return rawName;
+        }
+        StringBuilder builder = new StringBuilder();
+        int len = rawName.length();
+        for (int i = 0; i < len; i++) {
+            if (rawName.charAt(i) == '_') {
+                if (i != len - 1) {
+                    builder.append((char) (rawName.charAt(++i) - 32));
+                }
+            } else {
+                builder.append(rawName.charAt(i));
+            }
+        }
+        return builder.toString();
+    }
+
+    /**
      * check a string matches java method name rules
      * @param methodName method name string
      * @return check result

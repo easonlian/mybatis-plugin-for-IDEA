@@ -3,6 +3,7 @@
  */
 package org.qunar.plugin.mybatis.generator;
 
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
@@ -10,8 +11,8 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.XmlElementFactory;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -24,6 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.qunar.plugin.mybatis.bean.model.CreateTableDdl;
 import org.qunar.plugin.mybatis.util.DbDdlParser;
+import org.qunar.plugin.mybatis.util.MapperConfHolder;
+
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Properties;
 
 /**
  * generate mapper sql xml
@@ -36,16 +42,19 @@ public class XmlVelocityGenerator extends AbstractGenerator {
     @NotNull
     private final PsiClass mapperClass;
     @NotNull
+    private final PsiClass beanClass;
+    @NotNull
     private final String fileName;
     @NotNull
     private final String dirPath;
     @NotNull
     private final SqlCreateTableStatement myCreateTableDdl;
 
-    public XmlVelocityGenerator(@NotNull Project project, @NotNull PsiClass mapperClass,
+    public XmlVelocityGenerator(@NotNull Project project, @NotNull PsiClass mapperClass, @NotNull PsiClass beanClass,
                                 @NotNull SqlElement sqlElement, @NotNull String relatedPath) {
         super(project, sqlElement);
         this.mapperClass = mapperClass;
+        this.beanClass = beanClass;
         relatedPath = relatedPath.startsWith("/") ? relatedPath.substring(1, relatedPath.length()) :relatedPath;
         int lastIndex = relatedPath.lastIndexOf("/");
         this.dirPath = lastIndex < 0 ? "" : relatedPath.substring(0, lastIndex);
@@ -64,63 +73,66 @@ public class XmlVelocityGenerator extends AbstractGenerator {
         PsiDirectory baseDir = PsiManager.getInstance(project).findDirectory(dirVirtualFile);
         final PsiDirectory generateDir = createOrFindDirectory(baseDir);
 
-        return ApplicationManager.getApplication().runWriteAction(new Computable<XmlFile>() {
+        return WriteCommandAction.runWriteCommandAction(project, new Computable<XmlFile>() {
             @Override
             public XmlFile compute() {
+                try {
+                    VelocityEngine vmEngine = new VelocityEngine();
+                    Properties properties = new Properties();
+                    properties.load(getAbstractPathStream("velocity/velocity.properties"));
+                    vmEngine.init(properties);
 
-                CreateTableDdl createTableDdl = DbDdlParser.parseCreateTableDdl(myCreateTableDdl);
+                    Template t = vmEngine.getTemplate(getAbstractPathText("velocity/template/mapper.vm"));
+                    CreateTableDdl createTableDdl = DbDdlParser.parseCreateTableDdl(myCreateTableDdl);
+                    VelocityContext context = new VelocityContext();
+                    context.put("empty", "");
+                    context.put("namespace", mapperClass.getQualifiedName());
+                    context.put("beanClass", beanClass.getQualifiedName());
+                    context.put("dbName", createTableDdl.getDbName());
+                    context.put("columns", createTableDdl.getColumns());
+                    context.put("indexes", createTableDdl.getDbIndices());
+                    context.put("keys", createTableDdl.getDbKeys());
+                    context.put("foreignKeys", createTableDdl.getForeignKeys());
 
-                VelocityEngine vmEngine = new VelocityEngine();
-                vmEngine.init();
-                Template t = vmEngine.getTemplate("template/mapper.vm");
-
-
-                VelocityContext context = new VelocityContext();
-                context.put("columns", myCreateTableDdl.getDeclaredColumns());
-                return null;
+                    StringWriter writer = new StringWriter();
+                    t.merge(context, writer);
+                    String xml = writer.toString();
+                    XmlFile xmlFile = (XmlFile) PsiFileFactory.getInstance(project)
+                            .createFileFromText(XMLLanguage.INSTANCE, xml);
+                    //noinspection ConstantConditions
+                    XmlTag rootTag = (XmlTag) CodeStyleManager.getInstance(project).reformat(xmlFile.getRootTag(), true);
+                    rootTag.getContainingFile().setName(fileName + ".xml");
+                    xmlFile = (XmlFile) generateDir.add(rootTag.getContainingFile());
+                    MapperConfHolder.INSTANCE.getDomElement(xmlFile);
+                    return xmlFile;
+                } catch (Exception e) {
+                    logger.error("mapper generator error", e);
+                    return null;
+                }
             }
         });
     }
 
     /**
-     * generate mapper statement
-     * @param xmlFile mapper xml file
+     * class path related file path
+     * @param relatedPath file path related to class path
+     * @return absolute path
      */
-    private void generateStatement(final XmlFile xmlFile) {
-        WriteCommandAction.runWriteCommandAction(project, new Runnable() {
-            @Override
-            public void run() {
-                XmlTag rootTag = xmlFile.getRootTag();
-                if (rootTag == null) return;
+    @NotNull
+    private String getAbstractPathText(String relatedPath) {
+        //noinspection ConstantConditions
+        return getClass().getClassLoader().getResource(relatedPath).getPath();
+    }
 
-                @SuppressWarnings("ConstantConditions")
-                String qualifiedBeanName = mapperClass.getQualifiedName().substring(0, mapperClass.getName().length() - 3);
-
-                String sql = String.format(
-                        "<select id=\"selectList\" parameterType=\"%s\">\n" +
-                                "      SELECT * FROM %s\n" +
-                                "    </select>", qualifiedBeanName, myCreateTableDdl.getName());
-                XmlTag selectListTag = XmlElementFactory.getInstance(project).createTagFromText(sql);
-                rootTag.add(selectListTag);
-
-                sql = String.format(
-                        "<delete id=\"delete\" parameterType=\"%s\">\n" +
-                                "      DELETE FROM %s WHERE id = #{id}\n" +
-                                "    </delete>", qualifiedBeanName, myCreateTableDdl.getName());
-                XmlTag deleteTag = XmlElementFactory.getInstance(project).createTagFromText(sql);
-                rootTag.add(deleteTag);
-
-                sql = String.format(
-                        "<insert id=\"insert\" parameterType=\"%s\">\n" +
-                                "      INSERT INTO %s(" +
-                                ")\n" +
-                                "    </insert>", qualifiedBeanName, myCreateTableDdl.getName());
-                XmlTag insertOne = XmlElementFactory.getInstance(project).createTagFromText(sql);
-                rootTag.add(insertOne);
-
-                CodeStyleManager.getInstance(project).reformat(xmlFile.getRootTag());
-            }
-        });
+    /**
+     * class path related file path
+     * @param relatedPath file path related to class path
+     * @return absolute path
+     */
+    @NotNull
+    private InputStream getAbstractPathStream(String relatedPath) {
+        //noinspection ConstantConditions
+        return getClass().getClassLoader().getResourceAsStream(relatedPath);
     }
 
     /**
@@ -133,6 +145,7 @@ public class XmlVelocityGenerator extends AbstractGenerator {
             @Override
             public PsiDirectory compute() {
                 PsiDirectory directory = baseDir;
+                System.out.println(baseDir);
                 for (String path : dirPath.split("/")) {
                     PsiDirectory subDirectory = directory.findSubdirectory(path);
                     if (subDirectory == null) {

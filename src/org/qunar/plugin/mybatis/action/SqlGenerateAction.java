@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
@@ -55,14 +56,15 @@ public class SqlGenerateAction extends AnAction {
         String qualifiedName = "org.qunar.temp.dao.SupplierDao";
 
         JavaGenerator javaGenerator = new JavaGenerator(project, sqlElement, qualifiedName);
-        PsiClass generateClass = javaGenerator.generate();
+        Pair<PsiClass, PsiClass> classPair = javaGenerator.generate();
 
-        if (generateClass == null) {
+        if (classPair == null) {
             return;
         }
 
         String relatedPath = "mybatis/mapper/temp/SupplierMapper";
-        XmlVelocityGenerator xmlGenerator = new XmlVelocityGenerator(project, generateClass, sqlElement, relatedPath);
+        XmlVelocityGenerator xmlGenerator = new XmlVelocityGenerator(project,
+                classPair.getFirst(), classPair.getSecond(), sqlElement, relatedPath);
         XmlFile xmlFile = xmlGenerator.generate();
         System.out.println(xmlFile);
     }
