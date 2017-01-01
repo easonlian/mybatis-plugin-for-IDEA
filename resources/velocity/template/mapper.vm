@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<!--suppress CheckEmptyScriptTag, HtmlFormInputWithoutLabel, HtmlUnknownTag, HtmlUnknownAttribute -->
 <mapper namespace="$namespace">
+
+    <resultMap id="resultMap" type="$beanClass">
+        #foreach($column in $columns)
+<result column="$column.name" property="$column.propertyName"/>
+        #end
+    </resultMap>
+
+    <sql id="allFields">
+        #foreach($column in $columns)
+$column.name as $column.propertyName #if($velocityCount != $columns.size()),#end $empty
+        #end
+</sql>
+
+    <sql id="where">
+        <where>
+        #foreach($column in $columns)
+    <if test="$column.name != null">
+                AND $column.name = #{$column.name}
+            </if>
+        #end
+</where>
+    </sql>
 
     <select id="selectList" resultType="$beanClass">
         SELECT
@@ -22,33 +43,11 @@
     <insert id="insert">
         INSERT INTO
         $dbName (#foreach($column in $columns)$column.name #if($velocityCount != $columns.size()),#end #end)
-        VALUES (#foreach($column in $columns)$column.propertyName #if($velocityCount != $columns.size()),#end #end)
+        VALUES (#foreach($column in $columns)#{$column.propertyName} #if($velocityCount != $columns.size()),#end #end)
     </insert>
 
     <delete id="delete">
         DELETE FROM $dbName <include refid="where"/>
     </delete>
-
-    <resultMap id="resultMap" type="$beanClass">
-        #foreach($column in $columns)
-            <result column="$column.name" property="$column.propertyName"/>
-        #end
-    </resultMap>
-
-    <sql id="allFields">
-        #foreach($column in $columns)
-            $column.name as $column.propertyName #if($velocityCount != $columns.size()),#end $empty
-        #end
-</sql>
-
-    <sql id="where">
-        <where>
-            #foreach($column in $columns)
-                <if test="$column.name != null">
-                    AND $column.name = #{$column.name}
-                </if>
-            #end
-        </where>
-    </sql>
 
 </mapper>
