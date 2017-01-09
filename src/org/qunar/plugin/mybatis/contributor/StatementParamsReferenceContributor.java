@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public class StatementParamsReferenceContributor extends PsiReferenceContributor {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\$\\{[a-zA-Z0-9_.]*})|(#\\{[a-zA-Z0-9_.]*})");
+    private static final Pattern PATTERN = Pattern.compile("(\\$\\{[a-zA-Z0-9_. ,=]*})|(#\\{[a-zA-Z0-9_. ,=]*})");
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
@@ -66,8 +66,8 @@ public class StatementParamsReferenceContributor extends PsiReferenceContributor
                                 }
                             }
                             if (belong2SubTag) continue;
-                            references.add(new StatementParamsReference(xmlTag,
-                                    parentTagPair.first, TextRange.create(start, end)).extraParams(parentTagPair.second));
+                            references.add(new StatementParamsReference(xmlTag, parentTagPair.first,
+                                    TextRange.create(start, end)).extraParams(parentTagPair.second));
                         }
                         return references.toArray(new PsiReference[references.size()]);
                     }

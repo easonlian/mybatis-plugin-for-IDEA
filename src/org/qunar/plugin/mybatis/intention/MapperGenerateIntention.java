@@ -108,7 +108,8 @@ public class MapperGenerateIntention implements IntentionAction {
             return null;
         }
         PsiClass psiClass = javaFile.getClasses()[0];
-        if (!MapperConfHolder.INSTANCE.getMapperDomElements(psiClass).isEmpty()) {
+        if (!psiClass.isInterface()
+                && !MapperConfHolder.INSTANCE.getMapperDomElements(psiClass).isEmpty()) {
             return null;
         }
         return psiClass;
