@@ -80,6 +80,8 @@ public class XmlVelocityGenerator extends AbstractGenerator {
                     VelocityEngine vmEngine = new VelocityEngine();
                     Properties properties = new Properties();
                     properties.load(getAbstractPathStream("velocity/velocity.properties"));
+                    //  override path attribute
+                    properties.put("file.resource.loader.path", "");
                     vmEngine.init(properties);
 
                     Template t = vmEngine.getTemplate(getAbstractPathText("velocity/template/mapper.vm"));

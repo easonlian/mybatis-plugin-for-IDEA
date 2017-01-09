@@ -3,6 +3,8 @@ package org.qunar.plugin.mybatis.util;
 import com.google.common.collect.Lists;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -53,16 +55,21 @@ public class DomElements {
      * @return statements
      */
     @NotNull
-    public static List<Statement> collectStatements(Mapper mapperDom) {
+    public static List<Statement> collectStatements(final Mapper mapperDom) {
         if (mapperDom == null) {
             return Lists.newArrayList();
         }
-        List<Statement> statements = Lists.newArrayList();
-        statements.addAll(mapperDom.getSelects());
-        statements.addAll(mapperDom.getInserts());
-        statements.addAll(mapperDom.getUpdates());
-        statements.addAll(mapperDom.getDeletes());
-        return statements;
+        return ApplicationManager.getApplication().runReadAction(new Computable<List<Statement>>() {
+            @Override
+            public List<Statement> compute() {
+                List<Statement> statements = Lists.newArrayList();
+                statements.addAll(mapperDom.getSelects());
+                statements.addAll(mapperDom.getInserts());
+                statements.addAll(mapperDom.getUpdates());
+                statements.addAll(mapperDom.getDeletes());
+                return statements;
+            }
+        });
     }
 
     /**
