@@ -19,7 +19,6 @@ import org.qunar.plugin.util.XmlUtils;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * mapper dom cache util
@@ -30,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MapperConfHolder extends ConfHolder<Mapper> {
 
     public static final MapperConfHolder INSTANCE = new MapperConfHolder(Mapper.class);
-    private final AtomicBoolean initCheck = new AtomicBoolean(true);
 
     private MapperConfHolder(@NotNull Class<Mapper> clazz) {
         super(clazz);
@@ -46,24 +44,37 @@ public class MapperConfHolder extends ConfHolder<Mapper> {
         return ApplicationManager.getApplication().runReadAction(new Computable<Collection<Mapper>>() {
             @Override
             public Collection<Mapper> compute() {
-                if (initCheck.getAndSet(false) || getAllDomElements().isEmpty()) {
+                if (getAllDomElements().isEmpty()) {
                     initAllMappers(mapperClass.getProject());
                 }
-                return Collections2.filter(getAllDomElements(), new Predicate<Mapper>() {
+                Collection<Mapper> mappers = filterMapperDom(getAllDomElements(), mapperClass);
+                if (mappers.isEmpty()) {
+                    initAllMappers(mapperClass.getProject());
+                }
+                return filterMapperDom(getAllDomElements(), mapperClass);
+            }
+        });
+    }
+
+    /**
+     * filter mapper dom
+     * @param allDocuments 所有mapper dom
+     * @param targetClass mapper class
+     * @return mapping mappers
+     */
+    private Collection<Mapper> filterMapperDom(Collection<Mapper> allDocuments, final PsiClass targetClass) {
+        return Collections2.filter(allDocuments, new Predicate<Mapper>() {
+            @Override
+            public boolean apply(final Mapper mapper) {
+                return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
                     @Override
-                    public boolean apply(final Mapper mapper) {
-                        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-                            @Override
-                            public Boolean compute() {
-                                if (mapper.getXmlTag() == null || !rootTagName.equals(mapper.getXmlTag().getName())) {
-                                    initCheck.set(false);
-                                    return false;
-                                }
-                                mapper.getNamespace();
-                                PsiClass psiClass = XmlUtils.getAttrValue(mapper.getNamespace());
-                                return psiClass == mapperClass;
-                            }
-                        });
+                    public Boolean compute() {
+                        if (mapper.getXmlTag() == null || !rootTagName.equals(mapper.getXmlTag().getName())) {
+                            return false;
+                        }
+                        mapper.getNamespace();
+                        PsiClass psiClass = XmlUtils.getAttrValue(mapper.getNamespace());
+                        return psiClass == targetClass;
                     }
                 });
             }
