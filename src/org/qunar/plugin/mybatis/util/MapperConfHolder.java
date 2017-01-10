@@ -46,7 +46,7 @@ public class MapperConfHolder extends ConfHolder<Mapper> {
         return ApplicationManager.getApplication().runReadAction(new Computable<Collection<Mapper>>() {
             @Override
             public Collection<Mapper> compute() {
-                if (initCheck.getAndSet(false)) {
+                if (initCheck.getAndSet(false) || getAllDomElements().isEmpty()) {
                     initAllMappers(mapperClass.getProject());
                 }
                 return Collections2.filter(getAllDomElements(), new Predicate<Mapper>() {
