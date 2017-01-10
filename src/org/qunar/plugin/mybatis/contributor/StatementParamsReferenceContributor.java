@@ -33,7 +33,8 @@ import java.util.regex.Pattern;
  */
 public class StatementParamsReferenceContributor extends PsiReferenceContributor {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\$\\{[a-zA-Z0-9_. ,=]*})|(#\\{[a-zA-Z0-9_. ,=]*})");
+    private static final Pattern PATTERN = Pattern.compile("(\\$\\{\\s*([a-zA-Z0-9_ ]+)\\s*" +
+            "(,[a-zA-Z0-9_. ,=]*)?})|(\\s*#\\{([a-zA-Z0-9_]+)\\s*(,[a-zA-Z0-9_. ,=]*)?})");
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
@@ -54,9 +55,9 @@ public class StatementParamsReferenceContributor extends PsiReferenceContributor
                         Matcher matcher = PATTERN.matcher(xmlTag.getText());
                         List<StatementParamsReference> references = Lists.newArrayList();
                         while (matcher.find()) {
-                            if (matcher.group().contains(".")) continue;
-                            int start = matcher.start() + 2;    //  add 2 space for '#{' or '${'
-                            int end = matcher.end() - 1;        //  add 1 space for '}'
+                            int groupIndex = matcher.groupCount() - 1;
+                            int start = matcher.start(groupIndex);
+                            int end = matcher.end(groupIndex);
                             boolean belong2SubTag = false;
                             for (TextRange subTagRange : subTagRanges) {
                                 if (xmlTag.getTextRange().getStartOffset() + start > subTagRange.getStartOffset()

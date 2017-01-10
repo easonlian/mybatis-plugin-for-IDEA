@@ -5,7 +5,11 @@ package org.qunar.plugin.mybatis.reference;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomManager;
@@ -37,8 +41,7 @@ public class StatementParamsReference extends PsiReferenceBase<XmlTag> {
                                     @NotNull XmlTag parentTag, @NotNull TextRange range) {
         super(xmlTag, range, true);
         this.parent = parentTag;
-        String quoteText = xmlTag.getText().substring(range.getStartOffset(), range.getEndOffset());
-        text = quoteText.contains(",") ? quoteText.split(",")[0].trim() : quoteText;
+        text = xmlTag.getText().substring(range.getStartOffset(), range.getEndOffset());
     }
 
     /**
