@@ -55,9 +55,8 @@ public class StatementParamsReferenceContributor extends PsiReferenceContributor
                         Matcher matcher = PATTERN.matcher(xmlTag.getText());
                         List<StatementParamsReference> references = Lists.newArrayList();
                         while (matcher.find()) {
-                            int groupIndex = matcher.groupCount() - 1;
-                            int start = matcher.start(groupIndex);
-                            int end = matcher.end(groupIndex);
+                            int start = matcher.start();
+                            int end = matcher.end();
                             boolean belong2SubTag = false;
                             for (TextRange subTagRange : subTagRanges) {
                                 if (xmlTag.getTextRange().getStartOffset() + start > subTagRange.getStartOffset()
@@ -67,6 +66,9 @@ public class StatementParamsReferenceContributor extends PsiReferenceContributor
                                 }
                             }
                             if (belong2SubTag) continue;
+                            int groupIndex = matcher.groupCount() - 1;
+                            start = matcher.start(groupIndex);
+                            end = matcher.end(groupIndex);
                             references.add(new StatementParamsReference(xmlTag, parentTagPair.first,
                                     TextRange.create(start, end)).extraParams(parentTagPair.second));
                         }
