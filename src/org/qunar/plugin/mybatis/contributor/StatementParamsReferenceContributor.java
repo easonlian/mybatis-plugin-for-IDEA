@@ -69,6 +69,7 @@ public class StatementParamsReferenceContributor extends PsiReferenceContributor
                             int groupIndex = matcher.groupCount() - 1;
                             start = matcher.start(groupIndex);
                             end = matcher.end(groupIndex);
+                            if (start < 0 || end < 0) continue;
                             references.add(new StatementParamsReference(xmlTag, parentTagPair.first,
                                     TextRange.create(start, end)).extraParams(parentTagPair.second));
                         }
