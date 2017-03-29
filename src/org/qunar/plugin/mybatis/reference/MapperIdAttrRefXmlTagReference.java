@@ -49,6 +49,7 @@ abstract class MapperIdAttrRefXmlTagReference extends PsiReferenceBase<XmlAttrib
         List<LookupElement> lookupElements = Lists.newArrayList();
         for (IdDomElement idDomElement : getIdDomElements()) {
             if (XmlUtils.getAttrValue(idDomElement.getId()) != null) {
+                //noinspection ConstantConditions
                 lookupElements.add(LookupElementBuilder.create(XmlUtils.getAttrValue(idDomElement.getId())));
             }
         }
