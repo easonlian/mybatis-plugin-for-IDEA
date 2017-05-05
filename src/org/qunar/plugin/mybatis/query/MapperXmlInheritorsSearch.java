@@ -1,5 +1,7 @@
 package org.qunar.plugin.mybatis.query;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -75,25 +77,30 @@ public class MapperXmlInheritorsSearch implements QueryExecutor<XmlElement, Defi
     @SuppressWarnings("SameReturnValue")
     private boolean processMethod(@NotNull final PsiMethod mapperMethod,
                                   @NotNull final Processor<XmlElement> consumer) {
-        if (mapperMethod.getContainingClass() == null) {
-            return Boolean.TRUE;
-        }
-        Collection<Mapper> mapperDomElements = MapperConfHolder.INSTANCE
-                .getMapperDomElements(mapperMethod.getContainingClass());
-        for (final Mapper mapperDom : mapperDomElements) {
-            if (mapperDom.getXmlElement() != null) {
-                List<Statement> statements = DomElements.collectStatements(mapperDom);
-                for (final Statement statement : statements) {
-                    PsiMethod psiMethod = XmlUtils.getAttrValue(statement.getId());
-                    final XmlAttribute idAttr = statement.getXmlTag().getAttribute("id");
-                    if (psiMethod == mapperMethod && idAttr != null) {
-                        if (idAttr.getValueElement() != null) {
-                            consumer.process(idAttr.getValueElement());
+        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+            @Override
+            public Boolean compute() {
+                if (mapperMethod.getContainingClass() == null) {
+                    return Boolean.TRUE;
+                }
+                Collection<Mapper> mapperDomElements = MapperConfHolder.INSTANCE
+                        .getMapperDomElements(mapperMethod.getContainingClass());
+                for (final Mapper mapperDom : mapperDomElements) {
+                    if (mapperDom.getXmlElement() != null) {
+                        List<Statement> statements = DomElements.collectStatements(mapperDom);
+                        for (final Statement statement : statements) {
+                            PsiMethod psiMethod = XmlUtils.getAttrValue(statement.getId());
+                            final XmlAttribute idAttr = statement.getXmlTag().getAttribute("id");
+                            if (psiMethod == mapperMethod && idAttr != null) {
+                                if (idAttr.getValueElement() != null) {
+                                    consumer.process(idAttr.getValueElement());
+                                }
+                            }
                         }
                     }
                 }
+                return Boolean.TRUE;
             }
-        }
-        return Boolean.TRUE;
+        });
     }
 }
